@@ -31,6 +31,7 @@ import {
 } from '../data/constants';
 import { BeforeAfterSlider } from '../components/BeforeAfterSlider';
 import { AnimatedCounter } from '../components/AnimatedCounter';
+import { SafeImage } from '../components/SafeImage';
 import { useToast } from '../components/Toast';
 
 export const Home: React.FC = () => {
@@ -145,11 +146,11 @@ export const Home: React.FC = () => {
                 {/* Central main hero card: luxury bag & shoes collage */}
                 <div className="absolute top-4 left-4 right-4 bottom-16 bg-white p-3 rounded-2xl shadow-2xl border border-slate-100 z-10 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
                   <div className="relative w-full h-full rounded-xl overflow-hidden bg-slate-50">
-                    <img
+                    <SafeImage
                       src={ASSET_HERO}
                       alt="Commercial e-commerce products before and after post production"
+                      fallbackLabel="E-Commerce Hero Products"
                       className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
                     />
                     <div className="absolute bottom-3 left-3 bg-slate-900/85 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-md">
                       <span className="w-2 h-2 rounded-full bg-emerald-400" />
@@ -164,11 +165,11 @@ export const Home: React.FC = () => {
                 {/* Tilted Floating Card 1 (Top Right): Ghost Mannequin Sweater */}
                 <div className="absolute -top-4 -right-4 w-40 sm:w-44 bg-white p-2.5 rounded-xl shadow-xl border border-slate-100 z-20 transform rotate-6 hover:rotate-3 transition-transform duration-300">
                   <div className="relative aspect-square rounded-lg overflow-hidden bg-slate-50">
-                    <img
+                    <SafeImage
                       src={ASSET_SWEATER}
                       alt="Ghost Mannequin apparel item"
+                      fallbackLabel="Ghost Mannequin Sweater"
                       className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
                     />
                     <div className="absolute top-2 left-2 bg-[#0F2A55] text-white text-[10px] font-bold px-2 py-0.5 rounded">
                       Neck Joint
@@ -185,11 +186,11 @@ export const Home: React.FC = () => {
                 {/* Tilted Floating Card 2 (Bottom Left): Footwear Sneaker */}
                 <div className="absolute -bottom-6 -left-4 w-44 sm:w-48 bg-white p-2.5 rounded-xl shadow-xl border border-slate-100 z-20 transform -rotate-6 hover:-rotate-2 transition-transform duration-300">
                   <div className="relative aspect-square rounded-lg overflow-hidden bg-slate-50">
-                    <img
+                    <SafeImage
                       src={ASSET_SNEAKER}
                       alt="Retouched footwear sneaker"
+                      fallbackLabel="Sneaker Retouch"
                       className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
                     />
                     <div className="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
                       Clipping Path
@@ -206,11 +207,11 @@ export const Home: React.FC = () => {
                 {/* Floating Badge (Bottom Right): Bottle Reflection */}
                 <div className="absolute bottom-2 -right-3 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl shadow-lg border border-slate-200 z-20 flex items-center gap-2.5 transform rotate-2">
                   <div className="w-8 h-8 rounded-lg overflow-hidden bg-slate-100 shrink-0">
-                    <img
+                    <SafeImage
                       src={ASSET_BOTTLE}
                       alt="Cosmetic bottle"
+                      fallbackLabel="Cosmetic Bottle"
                       className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
                     />
                   </div>
                   <div>
@@ -254,12 +255,12 @@ export const Home: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left: Image with rounded frame and floating experience badge */}
             <div className="lg:col-span-5 relative">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100">
-                <img
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100 h-[420px]">
+                <SafeImage
                   src={ASSET_STUDIO}
                   alt="Pro Retouching digital studio workspace in Bangladesh"
-                  className="w-full h-[420px] object-cover object-center"
-                  referrerPolicy="no-referrer"
+                  fallbackLabel="Dhaka Studio Workspace"
+                  className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
               </div>
@@ -342,11 +343,11 @@ export const Home: React.FC = () => {
             <div className="lg:col-span-5">
               <div className="relative rounded-3xl overflow-hidden shadow-xl border border-slate-200 bg-white p-3">
                 <div className="rounded-2xl overflow-hidden aspect-[4/3] bg-slate-100">
-                  <img
+                  <SafeImage
                     src={ASSET_SNEAKER}
                     alt="Why choose Pro Retouching production showcase"
+                    fallbackLabel="Sneaker Retouching"
                     className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
                   />
                 </div>
                 <div className="p-4 bg-slate-50 rounded-xl mt-3 flex items-center justify-between">

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import { SafeImage } from './SafeImage';
 
 interface BeforeAfterSliderProps {
   beforeImage: string;
@@ -47,7 +48,6 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
     }
   };
 
-  // Click on track to jump
   const handleTrackClick = (e: React.MouseEvent) => {
     handleMove(e.clientX);
   };
@@ -65,13 +65,14 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
     >
       {/* AFTER IMAGE (Underneath, full container) */}
       <div className="absolute inset-0 w-full h-full">
-        <img
+        <SafeImage
           src={afterImage}
           alt={afterLabel}
-          referrerPolicy="no-referrer"
+          fallbackLabel={`After: ${afterLabel}`}
+          gradientClass="from-slate-100 via-emerald-50/50 to-slate-200"
           className="w-full h-full object-cover object-center"
         />
-        <div className="absolute top-4 right-4 bg-emerald-600/90 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow-sm pointer-events-none">
+        <div className="absolute top-4 right-4 bg-emerald-600/90 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow-sm pointer-events-none z-10">
           {afterLabel}
         </div>
       </div>
@@ -81,11 +82,15 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
         className="absolute inset-0 w-full h-full overflow-hidden"
         style={{ width: `${sliderPosition}%` }}
       >
-        <div className="relative w-full h-full" style={{ width: containerRef.current ? `${containerRef.current.offsetWidth}px` : '100%' }}>
-          <img
+        <div
+          className="relative w-full h-full"
+          style={{ width: containerRef.current ? `${containerRef.current.offsetWidth}px` : '100%' }}
+        >
+          <SafeImage
             src={beforeImage}
             alt={beforeLabel}
-            referrerPolicy="no-referrer"
+            fallbackLabel={`Before: ${beforeLabel}`}
+            gradientClass="from-slate-200 via-slate-100 to-amber-50/40"
             className={`w-full h-full object-cover object-center ${
               variant === 'cutout'
                 ? 'brightness-90 contrast-90 sepia-[0.15]'
@@ -94,7 +99,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
                 : ''
             }`}
           />
-          <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow-sm pointer-events-none">
+          <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow-sm pointer-events-none z-10">
             {beforeLabel}
           </div>
         </div>
@@ -102,7 +107,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
 
       {/* DRAG HANDLE LINE */}
       <div
-        className="absolute top-0 bottom-0 w-0.5 bg-amber-500 shadow-xl pointer-events-none"
+        className="absolute top-0 bottom-0 w-0.5 bg-amber-500 shadow-xl pointer-events-none z-20"
         style={{ left: `${sliderPosition}%` }}
       >
         {/* CENTER BUTTON */}
@@ -114,7 +119,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
       </div>
 
       {/* Hover Instruction helper */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm text-white/90 text-[11px] px-3 py-1 rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm text-white/90 text-[11px] px-3 py-1 rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-20">
         Drag slider or click anywhere to compare
       </div>
     </div>

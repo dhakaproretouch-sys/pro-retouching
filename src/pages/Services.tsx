@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, Check, Clock, Tag } from 'lucide-react';
 import { SERVICES_LIST } from '../data/constants';
+import { SafeImage } from '../components/SafeImage';
 
 export const Services: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -68,11 +69,11 @@ export const Services: React.FC = () => {
               >
                 {/* Image Preview */}
                 <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
-                  <img
+                  <SafeImage
                     src={service.afterImage}
                     alt={service.title}
+                    fallbackLabel={service.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
                   />
                   <div className="absolute top-3 left-3 bg-[#0F2A55]/85 backdrop-blur-sm text-white text-[11px] font-semibold px-2.5 py-1 rounded-md">
                     {service.category}

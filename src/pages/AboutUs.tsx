@@ -15,6 +15,7 @@ import {
   Check,
 } from 'lucide-react';
 import { COMPANY_INFO, ASSET_STUDIO, ASSET_HERO } from '../data/constants';
+import { SafeImage } from '../components/SafeImage';
 
 export const AboutUs: React.FC = () => {
   const workflowSteps = [
@@ -103,12 +104,12 @@ export const AboutUs: React.FC = () => {
             </div>
 
             <div className="lg:col-span-6 relative">
-              <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-                <img
+              <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white h-[460px] bg-slate-100">
+                <SafeImage
                   src={ASSET_STUDIO}
                   alt="Pro Retouching dedicated photo retouching studio in Dhaka"
-                  className="w-full h-[460px] object-cover"
-                  referrerPolicy="no-referrer"
+                  fallbackLabel="Dedicated Dhaka Studio"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>

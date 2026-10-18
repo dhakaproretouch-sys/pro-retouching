@@ -123,12 +123,12 @@ export const WHY_CHOOSE_ITEMS = [
   },
 ];
 
-// Product image assets generated in studio
-export const ASSET_HERO = "/src/assets/images/ecommerce_hero_products_1792334147319.jpg";
-export const ASSET_STUDIO = "/src/assets/images/photo_retouching_studio_1792334148075.jpg";
-export const ASSET_SWEATER = "/src/assets/images/ghost_mannequin_sweater_1792334148340.jpg";
-export const ASSET_SNEAKER = "/src/assets/images/footwear_sneaker_retouch_1792334148843.jpg";
-export const ASSET_BOTTLE = "/src/assets/images/cosmetic_bottle_reflection_1792334149349.jpg";
+// Static local images under /images/ (served from /public/images/)
+export const ASSET_HERO = "/images/hero.jpg";
+export const ASSET_STUDIO = "/images/studio.jpg";
+export const ASSET_SWEATER = "/images/sweater.jpg";
+export const ASSET_SNEAKER = "/images/sneaker.jpg";
+export const ASSET_BOTTLE = "/images/bottle.jpg";
 
 export const SERVICES_LIST: ServiceItem[] = [
   {
