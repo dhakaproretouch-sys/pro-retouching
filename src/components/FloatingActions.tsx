@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUp, MessageSquare } from 'lucide-react';
 import { COMPANY_INFO } from '../data/constants';
+import { useSettings } from '../hooks/usePublic';
 
 export const FloatingActions: React.FC = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const { settings } = useSettings();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +37,7 @@ export const FloatingActions: React.FC = () => {
 
       {/* WhatsApp Chat Button */}
       <a
-        href={`https://wa.me/${COMPANY_INFO.whatsapp}?text=Hello%20Pro%20Retouching%2C%20I%20would%20like%20to%20inquire%20about%20your%20image%20editing%20services.`}
+        href={`https://wa.me/${(settings.whatsapp || COMPANY_INFO.whatsapp).replace(/\D/g, '')}?text=Hello%20Pro%20Retouching%2C%20I%20would%20like%20to%20inquire%20about%20your%20image%20editing%20services.`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat with Pro Retouching on WhatsApp"

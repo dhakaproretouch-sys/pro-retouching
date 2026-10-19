@@ -12,20 +12,29 @@ import {
   Link as LinkIcon,
   HelpCircle,
 } from 'lucide-react';
-import { COMPANY_INFO, SERVICES_LIST } from '../data/constants';
 import { useToast } from '../components/Toast';
+import { useServices, useSettings } from '../hooks/usePublic';
+import { postFreeTest } from '../lib/publicApi';
+import { getApiErrorMessage } from '../lib/api';
+
+const MAX_FILES = 3;
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 interface UploadedFilePreview {
   id: string;
   name: string;
   size: string;
   previewUrl?: string;
+  file: File;
 }
 
 export const FreeTest: React.FC = () => {
   const { showToast } = useToast();
   const [searchParams] = useSearchParams();
   const defaultService = searchParams.get('service') || 'clipping-path';
+  const { services } = useServices();
+  const { settings } = useSettings();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -34,6 +43,7 @@ export const FreeTest: React.FC = () => {
   const [cloudLink, setCloudLink] = useState('');
   const [instructions, setInstructions] = useState('');
   const [turnaround, setTurnaround] = useState('12h');
+  const [honeypot, setHoneypot] = useState('');
   const [files, setFiles] = useState<UploadedFilePreview[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,11 +55,29 @@ export const FreeTest: React.FC = () => {
     const newFiles: UploadedFilePreview[] = [];
 
     Array.from(fileList).forEach((file) => {
-      if (files.length + newFiles.length >= 3) {
+      if (files.length + newFiles.length >= MAX_FILES) {
         showToast({
-          title: 'Maximum 3 files for Free Test',
+          title: `Maximum ${MAX_FILES} files for Free Test`,
           message: 'If you have a bigger catalog, include a cloud drive link below.',
           type: 'info',
+        });
+        return;
+      }
+
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        showToast({
+          title: 'Unsupported file format',
+          message: `${file.name}: only JPG, PNG, and WebP images are accepted.`,
+          type: 'error',
+        });
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        showToast({
+          title: 'File too large',
+          message: `${file.name}: each file must be 5 MB or smaller.`,
+          type: 'error',
         });
         return;
       }
@@ -63,7 +91,8 @@ export const FreeTest: React.FC = () => {
         id: `${file.name}-${Date.now()}-${Math.random()}`,
         name: file.name,
         size: sizeFormatted,
-        previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+        previewUrl: URL.createObjectURL(file),
+        file,
       });
     });
 
@@ -89,31 +118,55 @@ export const FreeTest: React.FC = () => {
     handleFilesAdded(e.dataTransfer.files);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email) {
       showToast({ title: 'Please provide your name and email', type: 'error' });
       return;
     }
 
-    if (files.length === 0 && !cloudLink) {
+    if (files.length === 0) {
       showToast({
-        title: 'Please upload sample images or provide a drive link',
+        title: 'Please upload at least one sample image',
+        message: 'The backend requires uploaded files; a cloud link alone cannot be processed yet.',
         type: 'error',
       });
       return;
     }
 
+    // Honeypot: bots fill hidden fields — pretend success and bail.
+    if (honeypot) {
+      setSubmittedSuccess(true);
+      return;
+    }
+
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('whatsapp', phone);
+      formData.append('service', service);
+      files.forEach((f) => formData.append('files', f.file));
+      await postFreeTest(formData);
       setSubmittedSuccess(true);
       showToast({
         title: 'Free Test Request Received!',
         message: 'Our senior retouching team will process your sample images within 12 hours.',
         type: 'success',
       });
-    }, 900);
+    } catch (error) {
+      showToast({
+        title: 'Could not submit free test',
+        message: getApiErrorMessage(
+          error,
+          'File uploads are temporarily unavailable. Please try again later or contact us on WhatsApp.'
+        ),
+        type: 'error',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -159,7 +212,7 @@ export const FreeTest: React.FC = () => {
 
               <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
                 <a
-                  href={`https://wa.me/${COMPANY_INFO.whatsapp}?text=Hi%20Pro%20Retouching%2C%20I%20just%20submitted%20a%20free%20test%20under%20${encodeURIComponent(
+                  href={`https://wa.me/${(settings.whatsapp || '').replace(/\D/g, '')}?text=Hi%20Pro%20Retouching%2C%20I%20just%20submitted%20a%20free%20test%20under%20${encodeURIComponent(
                     email
                   )}.`}
                   target="_blank"
@@ -186,6 +239,16 @@ export const FreeTest: React.FC = () => {
               onSubmit={handleSubmit}
               className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200/80 shadow-xl space-y-8"
             >
+              {/* Honeypot: hidden from humans, bots tend to fill it */}
+              <input
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                className="absolute -left-[9999px] h-0 w-0 opacity-0"
+              />
               {/* Step 1: User Info */}
               <div>
                 <h3 className="text-lg font-heading font-bold text-[#0F2A55] mb-4 flex items-center gap-2">
@@ -258,8 +321,8 @@ export const FreeTest: React.FC = () => {
                       onChange={(e) => setService(e.target.value)}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
                     >
-                      {SERVICES_LIST.map((srv) => (
-                        <option key={srv.id} value={srv.slug}>
+                      {services.map((srv) => (
+                        <option key={srv.slug} value={srv.slug}>
                           {srv.title}
                         </option>
                       ))}
@@ -310,7 +373,7 @@ export const FreeTest: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 mb-4">
-                  Send 2-3 sample images for a free test. Formats supported: JPG, PNG, TIFF, PSD, RAW (up to 50MB each).
+                  Send 2-3 sample images for a free test. Formats supported: JPG, PNG, WebP (up to 5MB each).
                 </p>
 
                 {/* Drag & Drop Area */}
@@ -330,7 +393,7 @@ export const FreeTest: React.FC = () => {
                     ref={fileInputRef}
                     onChange={(e) => handleFilesAdded(e.target.files)}
                     multiple
-                    accept="image/*,.raw,.cr2,.nef,.arw,.tiff,.psd"
+                    accept="image/jpeg,image/png,image/webp"
                     className="hidden"
                   />
                   <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-3">

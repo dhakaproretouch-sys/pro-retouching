@@ -1,28 +1,24 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, Check, Clock, Tag } from 'lucide-react';
-import { SERVICES_LIST } from '../data/constants';
 import { SafeImage } from '../components/SafeImage';
+import { SkeletonGrid } from '../components/Skeleton';
+import { useServices } from '../hooks/usePublic';
 
 export const Services: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const { services, loading } = useServices();
 
+  // Derive category pills from live data (fallback list already carries categories)
   const categories = [
     'All',
-    'Core Editing',
-    'Clipping & Isolation',
-    'Apparel Specialist',
-    'Retouching',
-    'Color & Grading',
-    'Enhancement',
-    'Graphics & Vector',
-    'Video & Motion',
+    ...Array.from(new Set(services.map((s) => s.category).filter(Boolean))),
   ];
 
   const filteredServices =
     selectedCategory === 'All'
-      ? SERVICES_LIST
-      : SERVICES_LIST.filter((s) => s.category === selectedCategory);
+      ? services
+      : services.filter((s) => s.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -61,8 +57,11 @@ export const Services: React.FC = () => {
       {/* Services Grid */}
       <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredServices.map((service) => (
+          {loading && filteredServices.length === 0 ? (
+            <SkeletonGrid count={6} />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredServices.map((service) => (
               <div
                 key={service.id}
                 className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl hover:border-amber-300 transition-all flex flex-col justify-between group"
@@ -78,9 +77,11 @@ export const Services: React.FC = () => {
                   <div className="absolute top-3 left-3 bg-[#0F2A55]/85 backdrop-blur-sm text-white text-[11px] font-semibold px-2.5 py-1 rounded-md">
                     {service.category}
                   </div>
-                  <div className="absolute bottom-3 right-3 bg-amber-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow">
-                    Starts {service.startingPrice}
-                  </div>
+                  {service.startingPrice && (
+                    <div className="absolute bottom-3 right-3 bg-amber-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow">
+                      Starts {service.startingPrice}
+                    </div>
+                  )}
                 </div>
 
                 {/* Content */}
@@ -121,8 +122,9 @@ export const Services: React.FC = () => {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Free Test Banner */}
           <div className="mt-16 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-3xl p-8 sm:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">

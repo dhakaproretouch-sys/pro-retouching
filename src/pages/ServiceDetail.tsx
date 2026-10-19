@@ -10,16 +10,48 @@ import {
   Tag,
   Zap,
 } from 'lucide-react';
-import { SERVICES_LIST } from '../data/constants';
 import { BeforeAfterSlider } from '../components/BeforeAfterSlider';
+import { SkeletonText } from '../components/Skeleton';
+import { useService } from '../hooks/usePublic';
 
 export const ServiceDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  const service = SERVICES_LIST.find((s) => s.slug === slug);
+  const { service, loading } = useService(slug);
 
-  if (!service) {
+  // Only redirect once we know the slug definitively does not exist (settled 404)
+  if (!loading && !service) {
     return <Navigate to="/services" replace />;
+  }
+
+  // Skeleton: no fallback matched this slug (e.g. admin-created service, slow first paint)
+  if (!service) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="bg-slate-50 border-b border-slate-200/80 py-3">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-amber-600 font-medium transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to All Services</span>
+            </Link>
+          </div>
+        </div>
+        <section className="py-12 lg:py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-7 space-y-4">
+              <div className="aspect-[4/3] rounded-3xl bg-slate-100 animate-pulse" />
+              <SkeletonText lines={2} />
+            </div>
+            <div className="lg:col-span-5 space-y-4">
+              <SkeletonText lines={6} />
+            </div>
+          </div>
+        </section>
+      </div>
+    );
   }
 
   return (

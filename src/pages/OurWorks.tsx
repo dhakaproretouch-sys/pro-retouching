@@ -1,26 +1,37 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, Clock, Sparkles, X, ArrowRight, Check } from 'lucide-react';
-import { PORTFOLIO_WORKS } from '../data/constants';
 import { BeforeAfterSlider } from '../components/BeforeAfterSlider';
+import { SkeletonGrid } from '../components/Skeleton';
+import { useWorks } from '../hooks/usePublic';
+
+type WorkItem = {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  image: string;
+  beforeImage: string;
+  afterImage: string;
+  turnaround: string;
+  clientType: string;
+};
 
 export const OurWorks: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState('All');
-  const [activeModalItem, setActiveModalItem] = useState<(typeof PORTFOLIO_WORKS)[0] | null>(null);
+  const [activeModalItem, setActiveModalItem] = useState<WorkItem | null>(null);
+  const { works, loading } = useWorks();
 
+  // Derive filter tabs from live data (fallback list already carries categories)
   const filterTabs = [
     'All',
-    'Clipping Path',
-    'Ghost Mannequin',
-    'Retouching',
-    'Shadow',
-    'Color Correction',
+    ...Array.from(new Set(works.map((w) => w.category).filter(Boolean))),
   ];
 
   const filteredItems =
     selectedFilter === 'All'
-      ? PORTFOLIO_WORKS
-      : PORTFOLIO_WORKS.filter((item) => item.category === selectedFilter);
+      ? works
+      : works.filter((item) => item.category === selectedFilter);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -59,29 +70,32 @@ export const OurWorks: React.FC = () => {
       {/* Gallery Grid */}
       <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group"
-              >
-                {/* Image Container with Slider Preview */}
-                <div className="p-3 bg-slate-50">
-                  <BeforeAfterSlider
-                    beforeImage={item.image}
-                    afterImage={item.image}
-                    beforeLabel="Before"
-                    afterLabel="After"
-                    aspectRatio="aspect-[4/3]"
-                    variant={
-                      item.category === 'Clipping Path'
-                        ? 'cutout'
-                        : item.category === 'Retouching'
-                        ? 'retouch'
-                        : 'standard'
-                    }
-                  />
-                </div>
+          {loading && filteredItems.length === 0 ? (
+            <SkeletonGrid count={6} />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group"
+                >
+                  {/* Image Container with Slider Preview */}
+                  <div className="p-3 bg-slate-50">
+                    <BeforeAfterSlider
+                      beforeImage={item.beforeImage}
+                      afterImage={item.afterImage}
+                      beforeLabel="Before"
+                      afterLabel="After"
+                      aspectRatio="aspect-[4/3]"
+                      variant={
+                        item.category === 'Clipping Path'
+                          ? 'cutout'
+                          : item.category === 'Retouching'
+                          ? 'retouch'
+                          : 'standard'
+                      }
+                    />
+                  </div>
 
                 {/* Content */}
                 <div className="p-6 flex-1 flex flex-col justify-between">
@@ -115,8 +129,9 @@ export const OurWorks: React.FC = () => {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Free Test Bottom Banner */}
           <div className="mt-16 bg-[#0F2A55] rounded-3xl p-8 sm:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
@@ -171,8 +186,8 @@ export const OurWorks: React.FC = () => {
 
             <div className="rounded-2xl overflow-hidden bg-slate-100">
               <BeforeAfterSlider
-                beforeImage={activeModalItem.image}
-                afterImage={activeModalItem.image}
+                beforeImage={activeModalItem.beforeImage}
+                afterImage={activeModalItem.afterImage}
                 beforeLabel="Original RAW"
                 afterLabel="Retouched Deliverable"
                 aspectRatio="aspect-[16/10]"

@@ -1,9 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Globe, MessageSquare, ArrowUpRight, ShieldCheck, Heart } from 'lucide-react';
-import { COMPANY_INFO, SERVICES_LIST } from '../data/constants';
+import { COMPANY_INFO } from '../data/constants';
+import { useServices, useSettings } from '../hooks/usePublic';
 
 export const Footer: React.FC = () => {
+  const { services } = useServices();
+  const { settings } = useSettings();
+  const whatsappDigits = (settings.whatsapp || '').replace(/\D/g, '');
+  const skypeHref = settings.skype ? `skype:${settings.skype}?chat` : '#';
   return (
     <footer className="bg-[#0F2A55] text-slate-300 pt-16 pb-10 border-t border-blue-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,7 +42,7 @@ export const Footer: React.FC = () => {
             </Link>
 
             <p className="text-sm text-slate-300 leading-relaxed">
-              {COMPANY_INFO.tagline}. High-volume, hand-crafted image and video post-production for global e-commerce sellers, Amazon merchants, and fashion houses.
+              {settings.tagline}. High-volume, hand-crafted image and video post-production for global e-commerce sellers, Amazon merchants, and fashion houses.
             </p>
 
             <div className="pt-2 flex items-center gap-2 text-xs text-amber-400/90 font-medium">
@@ -52,37 +57,37 @@ export const Footer: React.FC = () => {
             <ul className="space-y-3 text-sm">
               <li>
                 <a
-                  href={`tel:${COMPANY_INFO.phone}`}
+                  href={`tel:${settings.phone}`}
                   className="flex items-center gap-2.5 text-slate-300 hover:text-amber-400 transition-colors"
                 >
                   <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>{COMPANY_INFO.phone}</span>
+                  <span>{settings.phone}</span>
                 </a>
               </li>
               <li>
                 <a
-                  href={`mailto:${COMPANY_INFO.email}`}
+                  href={`mailto:${settings.email}`}
                   className="flex items-center gap-2.5 text-slate-300 hover:text-amber-400 transition-colors"
                 >
                   <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>{COMPANY_INFO.email}</span>
+                  <span>{settings.email}</span>
                 </a>
               </li>
               <li>
                 <a
-                  href={`https://wa.me/${COMPANY_INFO.whatsapp}`}
+                  href={`https://wa.me/${whatsappDigits}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2.5 text-slate-300 hover:text-amber-400 transition-colors"
                 >
                   <MessageSquare className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>WhatsApp: {COMPANY_INFO.phone}</span>
+                  <span>WhatsApp: {settings.phone}</span>
                 </a>
               </li>
               <li>
                 <div className="flex items-center gap-2.5 text-slate-300">
                   <Globe className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Skype: {COMPANY_INFO.skype}</span>
+                  <span>Skype: {settings.skype}</span>
                 </div>
               </li>
             </ul>
@@ -90,7 +95,7 @@ export const Footer: React.FC = () => {
             {/* Social Icons */}
             <div className="pt-2 flex items-center gap-2.5">
               <a
-                href="https://facebook.com"
+                href={settings.facebook || 'https://facebook.com'}
                 target="_blank"
                 rel="noreferrer"
                 className="w-8 h-8 rounded-lg bg-blue-900/60 hover:bg-amber-500 hover:text-white flex items-center justify-center text-slate-300 transition-colors text-xs font-bold"
@@ -99,7 +104,7 @@ export const Footer: React.FC = () => {
                 FB
               </a>
               <a
-                href="https://linkedin.com"
+                href={settings.linkedin || 'https://linkedin.com'}
                 target="_blank"
                 rel="noreferrer"
                 className="w-8 h-8 rounded-lg bg-blue-900/60 hover:bg-amber-500 hover:text-white flex items-center justify-center text-slate-300 transition-colors text-xs font-bold"
@@ -108,7 +113,7 @@ export const Footer: React.FC = () => {
                 IN
               </a>
               <a
-                href={`https://wa.me/${COMPANY_INFO.whatsapp}`}
+                href={`https://wa.me/${whatsappDigits}`}
                 target="_blank"
                 rel="noreferrer"
                 className="w-8 h-8 rounded-lg bg-blue-900/60 hover:bg-emerald-500 hover:text-white flex items-center justify-center text-slate-300 transition-colors text-xs font-bold"
@@ -117,7 +122,7 @@ export const Footer: React.FC = () => {
                 WA
               </a>
               <a
-                href="skype:live:proretouching_bd?chat"
+                href={skypeHref}
                 className="w-8 h-8 rounded-lg bg-blue-900/60 hover:bg-sky-500 hover:text-white flex items-center justify-center text-slate-300 transition-colors text-xs font-bold"
                 aria-label="Skype"
               >
@@ -169,7 +174,7 @@ export const Footer: React.FC = () => {
             <div className="space-y-3 text-sm text-slate-300">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-1" />
-                <p className="leading-relaxed">{COMPANY_INFO.address}</p>
+                <p className="leading-relaxed">{settings.address}</p>
               </div>
               <div className="pt-1 text-xs text-blue-200/80">
                 <p className="font-semibold text-white">Operating Hours:</p>
@@ -182,7 +187,9 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Copyright Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
-          <p>© 2026 All Rights Reserved by Pro Retouching.</p>
+          <p>
+            {settings.footerText || '© 2026 All Rights Reserved by Pro Retouching.'}
+          </p>
           <div className="flex items-center gap-6">
             <Link to="/contact" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="/contact" className="hover:text-white transition-colors">Terms of Service</Link>

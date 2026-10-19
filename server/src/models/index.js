@@ -1,0 +1,13 @@
+export { Admin } from './Admin.js';
+export { HeroSlide } from './HeroSlide.js';
+export { Service } from './Service.js';
+export { Work } from './Work.js';
+export { PricingPlan } from './PricingPlan.js';
+export { Stat } from './Stat.js';
+export { ClientLogo } from './ClientLogo.js';
+export { FAQ } from './FAQ.js';
+export { Testimonial } from './Testimonial.js';
+export { SiteSettings } from './SiteSettings.js';
+export { Quote } from './Quote.js';
+export { FreeTest } from './FreeTest.js';
+export { Message } from './Message.js';

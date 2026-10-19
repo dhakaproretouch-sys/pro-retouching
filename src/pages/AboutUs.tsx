@@ -14,10 +14,12 @@ import {
   Eye,
   Check,
 } from 'lucide-react';
-import { COMPANY_INFO, ASSET_STUDIO, ASSET_HERO } from '../data/constants';
+import { ASSET_STUDIO, ASSET_HERO } from '../data/constants';
 import { SafeImage } from '../components/SafeImage';
+import { useSettings } from '../hooks/usePublic';
 
 export const AboutUs: React.FC = () => {
+  const { settings } = useSettings();
   const workflowSteps = [
     {
       step: '01',
@@ -53,7 +55,7 @@ export const AboutUs: React.FC = () => {
             About Pro Retouching
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            {COMPANY_INFO.tagline}. Based in Dhaka, Bangladesh, we are a premier commercial image post-production powerhouse dedicated to global e-commerce excellence.
+            {settings.tagline}. Based in Dhaka, Bangladesh, we are a premier commercial image post-production powerhouse dedicated to global e-commerce excellence.
           </p>
         </div>
       </section>

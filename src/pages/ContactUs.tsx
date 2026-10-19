@@ -10,11 +10,16 @@ import {
   ShieldCheck,
   Globe,
 } from 'lucide-react';
-import { COMPANY_INFO, SERVICES_LIST } from '../data/constants';
+import { COMPANY_INFO } from '../data/constants';
 import { useToast } from '../components/Toast';
+import { useServices, useSettings } from '../hooks/usePublic';
+import { postContact } from '../lib/publicApi';
+import { getApiErrorMessage } from '../lib/api';
 
 export const ContactUs: React.FC = () => {
   const { showToast } = useToast();
+  const { services } = useServices();
+  const { settings } = useSettings();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -24,33 +29,52 @@ export const ContactUs: React.FC = () => {
     volume: '50-200',
     message: '',
   });
-
+  const [honeypot, setHoneypot] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) {
       showToast({ title: 'Please fill in the required fields', type: 'error' });
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    // Honeypot: bots fill hidden fields — pretend success and bail.
+    if (honeypot) {
       showToast({
         title: 'Message Sent Successfully!',
         message: 'Thank you for reaching out. Our project lead will respond within 30 minutes via email/WhatsApp.',
         type: 'success',
       });
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        service: 'clipping-path',
-        volume: '50-200',
-        message: '',
+      setFormData({ name: '', email: '', phone: '', service: 'clipping-path', volume: '50-200', message: '' });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // Backend has no `volume` field — fold it into the message text.
+      await postContact({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service: formData.service,
+        message: `Estimated monthly volume: ${formData.volume} images.\n\n${formData.message}`,
       });
-    }, 700);
+      showToast({
+        title: 'Message Sent Successfully!',
+        message: 'Thank you for reaching out. Our project lead will respond within 30 minutes via email/WhatsApp.',
+        type: 'success',
+      });
+      setFormData({ name: '', email: '', phone: '', service: 'clipping-path', volume: '50-200', message: '' });
+    } catch (error) {
+      showToast({
+        title: 'Could not send message',
+        message: getApiErrorMessage(error, 'Please try again in a moment.'),
+        type: 'error',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -84,6 +108,16 @@ export const ContactUs: React.FC = () => {
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Honeypot: hidden from humans, bots tend to fill it */}
+                <input
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  className="absolute -left-[9999px] h-0 w-0 opacity-0"
+                />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
@@ -137,8 +171,8 @@ export const ContactUs: React.FC = () => {
                       onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
                     >
-                      {SERVICES_LIST.map((srv) => (
-                        <option key={srv.id} value={srv.slug}>
+                      {services.map((srv) => (
+                        <option key={srv.slug} value={srv.slug}>
                           {srv.title}
                         </option>
                       ))}
@@ -217,7 +251,7 @@ export const ContactUs: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-sm text-slate-600 leading-relaxed pl-13">
-                  {COMPANY_INFO.address}
+                  {settings.address}
                 </p>
                 <div className="pl-13 pt-1 text-xs text-slate-500 flex items-center gap-2">
                   <Clock className="w-3.5 h-3.5 text-amber-500" />
@@ -233,7 +267,7 @@ export const ContactUs: React.FC = () => {
 
                 <div className="space-y-3 text-sm">
                   <a
-                    href={`https://wa.me/${COMPANY_INFO.whatsapp}`}
+                    href={`https://wa.me/${(settings.whatsapp || '').replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 transition-colors border border-transparent hover:border-emerald-200"
@@ -243,12 +277,12 @@ export const ContactUs: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-xs text-slate-900">WhatsApp (Instant Response)</p>
-                      <p className="text-xs text-slate-500">{COMPANY_INFO.phone}</p>
+                      <p className="text-xs text-slate-500">{settings.phone}</p>
                     </div>
                   </a>
 
                   <a
-                    href={`mailto:${COMPANY_INFO.email}`}
+                    href={`mailto:${settings.email}`}
                     className="flex items-center gap-3 p-3 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-700 transition-colors border border-transparent hover:border-amber-200"
                   >
                     <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
@@ -256,7 +290,7 @@ export const ContactUs: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-xs text-slate-900">Email Inquiries</p>
-                      <p className="text-xs text-slate-500">{COMPANY_INFO.email}</p>
+                      <p className="text-xs text-slate-500">{settings.email}</p>
                     </div>
                   </a>
 
@@ -266,7 +300,7 @@ export const ContactUs: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-xs text-slate-900">Skype ID</p>
-                      <p className="text-xs text-slate-500">{COMPANY_INFO.skype}</p>
+                      <p className="text-xs text-slate-500">{settings.skype}</p>
                     </div>
                   </div>
                 </div>

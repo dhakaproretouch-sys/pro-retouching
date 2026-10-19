@@ -17,12 +17,6 @@ import {
   Check,
 } from 'lucide-react';
 import {
-  COMPANY_INFO,
-  MARKETPLACE_LOGOS,
-  WHY_CHOOSE_ITEMS,
-  PRICE_STATS_STRIP,
-  SERVICES_LIST,
-  SNEAK_PEEK_COUNTERS,
   ASSET_HERO,
   ASSET_STUDIO,
   ASSET_SWEATER,
@@ -32,113 +26,162 @@ import {
 import { BeforeAfterSlider } from '../components/BeforeAfterSlider';
 import { AnimatedCounter } from '../components/AnimatedCounter';
 import { SafeImage } from '../components/SafeImage';
+import { HeroSlider } from '../components/HeroSlider';
 import { useToast } from '../components/Toast';
+import { SkeletonGrid } from '../components/Skeleton';
+import { useSlides, useServices, useLogos, useStats, useSettings } from '../hooks/usePublic';
+import { postQuote } from '../lib/publicApi';
+import { getApiErrorMessage } from '../lib/api';
 
 export const Home: React.FC = () => {
   const { showToast } = useToast();
+
+  // Live content (static fallbacks are baked into the hooks)
+  const { slides } = useSlides();
+  const { services } = useServices();
+  const { logos } = useLogos();
+  const { stats } = useStats();
+  const { settings } = useSettings();
 
   // Quote Form State
   const [quoteService, setQuoteService] = useState('clipping-path');
   const [quoteQuantity, setQuoteQuantity] = useState('50');
   const [quoteEmail, setQuoteEmail] = useState('');
-  const [quoteTurnaround, setQuoteTurnaround] = useState('24h');
+  const [quoteHoneypot, setQuoteHoneypot] = useState('');
   const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
 
-  const handleQuoteSubmit = (e: React.FormEvent) => {
+  const handleQuoteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quoteEmail) {
       showToast({ title: 'Please enter your email', type: 'error' });
       return;
     }
+    // Honeypot: bots fill hidden fields — pretend success and bail.
+    if (quoteHoneypot) {
+      showToast({ title: 'Quote Request Sent!', type: 'success' });
+      setQuoteEmail('');
+      return;
+    }
     setIsSubmittingQuote(true);
-    setTimeout(() => {
-      setIsSubmittingQuote(false);
+    try {
+      await postQuote({
+        service: quoteService,
+        quantity: quoteQuantity,
+        email: quoteEmail,
+      });
       showToast({
         title: 'Quote Request Sent!',
         message: `We received your request for ${quoteQuantity} images. Our project team will email your custom rate within 30 minutes.`,
         type: 'success',
       });
       setQuoteEmail('');
-    }, 800);
+    } catch (error) {
+      showToast({
+        title: 'Could not send quote request',
+        message: getApiErrorMessage(error, 'Please try again in a moment.'),
+        type: 'error',
+      });
+    } finally {
+      setIsSubmittingQuote(false);
+    }
   };
 
   // Primary 7 showcase services as required by section 6
-  const showcaseServices = SERVICES_LIST.slice(0, 7);
+  const showcaseServices = services.slice(0, 7);
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* =========================================================================
-          SECTION 1: HERO
+          SECTION 1: HERO (full-width background image slider)
           ========================================================================= */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-amber-50/70 via-rose-50/40 to-white pt-12 pb-20 lg:pt-16 lg:pb-28 border-b border-slate-100">
-        {/* Soft background ambient gradient shapes */}
-        <div className="absolute top-0 right-0 -mr-40 -mt-40 w-96 h-96 rounded-full bg-gradient-to-br from-amber-300/20 to-red-300/20 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 -ml-40 -mb-40 w-96 h-96 rounded-full bg-gradient-to-tr from-orange-300/20 to-pink-300/20 blur-3xl pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* Left Column: Heading & CTAs */}
-            <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100/80 border border-amber-200 text-[#0F2A55] text-xs font-semibold tracking-wide uppercase">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                <span>Premier Image Post-Production Studio</span>
-              </div>
-
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold text-[#0F2A55] tracking-tight leading-[1.12]">
-                <span className="italic text-amber-500 font-serif font-bold">Effortless</span>{' '}
-                Image Editing
-              </h1>
-
-              <div className="space-y-3">
-                <p className="text-lg sm:text-xl text-slate-700 font-medium leading-snug">
-                  {COMPANY_INFO.subheading}
-                </p>
-                {/* Decorative underline */}
-                <div className="w-28 h-1.5 bg-gradient-to-r from-amber-500 via-orange-500 to-red-400 rounded-full mx-auto lg:mx-0" />
-              </div>
-
-              <p className="text-slate-600 text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Outsource your high-volume e-commerce catalogs to dedicated Photoshop specialists in Bangladesh. Hand-drawn clipping paths, ghost mannequins, skin retouching, and shadow creation with guaranteed 24-hour turnaround.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
-                <Link
-                  to="/free-test"
-                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold text-base rounded-xl shadow-lg shadow-orange-500/25 hover:from-amber-600 hover:to-orange-700 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
-                >
-                  <Sparkles className="w-5 h-5 text-amber-200" />
-                  <span>Free Trial (2–3 Images)</span>
-                </Link>
-
-                <Link
-                  to="/services"
-                  className="w-full sm:w-auto px-7 py-4 bg-white text-[#0F2A55] font-semibold text-base rounded-xl border border-slate-200/90 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2"
-                >
-                  <span>Explore Services</span>
-                  <ArrowRight className="w-4 h-4 text-amber-500" />
-                </Link>
-              </div>
-
-              {/* Trust markers */}
-              <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-slate-500 font-medium">
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  <span>No Credit Card Required</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  <span>100% Hand-Drawn Paths</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  <span>Fast 12–24h Turnaround</span>
-                </div>
-              </div>
+      <section className="relative overflow-hidden">
+        {/* Full-bleed crossfading image slider with static content centered above it */}
+        <HeroSlider slides={slides} className="min-h-[70vh] lg:min-h-[max(80vh,520px)]">
+          <div className="w-full max-w-4xl text-center">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 border border-white/25 text-white text-xs font-semibold tracking-wide uppercase backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>Premier Image Post-Production Studio</span>
             </div>
 
-            {/* Right Column: Floating Collage of Product Images in Tilted Cards */}
-            <div className="lg:col-span-6 relative flex justify-center items-center py-6">
+            <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight leading-[1.12] text-white drop-shadow-[0_2px_16px_rgba(15,42,85,0.45)]">
+              <span className="bg-gradient-to-r from-pink-500 via-rose-400 to-orange-400 bg-clip-text text-transparent font-light">
+                Effortless
+              </span>{' '}
+              Image Editing
+            </h1>
+
+            <div className="mt-4 flex flex-col items-center">
+              <p className="text-base sm:text-lg lg:text-xl font-medium text-white">
+                The <strong className="font-extrabold">Matchless</strong> Image/Video Post-production Service for E-commerce Sellers
+              </p>
+              {/* Hand-drawn curved underline */}
+              <svg
+                className="mt-1.5 w-44 text-orange-400 sm:w-60"
+                viewBox="0 0 240 18"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6 12C52 4 110 2 160 5c26 1.6 50 4.6 74 9"
+                  stroke="currentColor"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M18 16c48-5 100-6.5 144-4"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  opacity="0.55"
+                />
+              </svg>
+            </div>
+
+            <p className="mt-5 mx-auto max-w-2xl text-sm sm:text-base leading-relaxed text-white/85">
+              Outsource your high-volume e-commerce catalogs to dedicated Photoshop specialists in Bangladesh. Hand-drawn clipping paths, ghost mannequins, skin retouching, and shadow creation with guaranteed 24-hour turnaround.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/free-test"
+                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#F59E0B] to-[#F97316] text-white font-semibold text-base rounded-full shadow-lg shadow-orange-600/40 hover:shadow-orange-500/60 hover:scale-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <Sparkles className="w-5 h-5 text-amber-200" />
+                <span>Free Trial (2–3 Images)</span>
+              </Link>
+
+              <Link
+                to="/services"
+                className="w-full sm:w-auto px-7 py-4 bg-white/10 backdrop-blur-md text-white font-semibold text-base rounded-full border border-white/40 hover:bg-white/20 hover:border-white/60 transition-all flex items-center justify-center gap-2"
+              >
+                <span>Explore Services</span>
+                <ArrowRight className="w-4 h-4 text-amber-300" />
+              </Link>
+            </div>
+
+            {/* Trust markers */}
+            <div className="pt-1 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/85 font-medium">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>No Credit Card Required</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>100% Hand-Drawn Paths</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Fast 12–24h Turnaround</span>
+              </div>
+            </div>
+          </div>
+        </HeroSlider>
+
+        {/* Existing hero supporting content kept below the slider */}
+        <div className="bg-gradient-to-b from-white via-amber-50/40 to-white border-b border-slate-100 py-14 lg:py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-lg mx-auto relative flex justify-center items-center py-6">
               <div className="relative w-full max-w-lg aspect-square">
                 {/* Background glow card */}
                 <div className="absolute inset-4 bg-gradient-to-tr from-amber-400/20 via-orange-400/20 to-red-400/10 rounded-3xl transform rotate-3 filter blur-xl" />
@@ -221,27 +264,36 @@ export const Home: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Client / Marketplace Logo Placeholders */}
-          <div className="mt-16 pt-8 border-t border-slate-200/80">
-            <p className="text-center text-xs font-semibold uppercase tracking-wider text-slate-600 mb-6">
-              Tailored for Top Marketplace Standards & Sellers Worldwide
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 items-center justify-items-center">
-              {MARKETPLACE_LOGOS.map((item) => (
-                <div
-                  key={item.name}
-                  className="px-5 py-2.5 rounded-xl border border-slate-200/60 bg-white/60 hover:bg-white hover:border-amber-300 transition-all text-slate-600 hover:text-[#0F2A55] text-center w-full max-w-[160px]"
-                >
-                  <span className="font-heading font-extrabold text-sm tracking-tight block">
-                    {item.name}
-                  </span>
-                  <span className="text-[10px] text-slate-600 font-medium block">
-                    {item.label}
-                  </span>
-                </div>
-              ))}
+            {/* Client / Marketplace Logo Placeholders */}
+            <div className="mt-16 pt-8 border-t border-slate-200/80">
+              <p className="text-center text-xs font-semibold uppercase tracking-wider text-slate-600 mb-6">
+                Tailored for Top Marketplace Standards & Sellers Worldwide
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 items-center justify-items-center">
+                {logos.map((item) => (
+                  <div
+                    key={item.id || item.name}
+                    className="px-5 py-2.5 rounded-xl border border-slate-200/60 bg-white/60 hover:bg-white hover:border-amber-300 transition-all text-slate-600 hover:text-[#0F2A55] text-center w-full max-w-[160px]"
+                  >
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="h-8 mx-auto object-contain"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="font-heading font-extrabold text-sm tracking-tight block">
+                        {item.name}
+                      </span>
+                    )}
+                    <span className="text-[10px] text-slate-600 font-medium block">
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -289,7 +341,8 @@ export const Home: React.FC = () => {
               </h2>
 
               <p className="text-slate-600 text-base leading-relaxed">
-                Pro Retouching is a premier offshore e-commerce photo editing and post-production studio operating from Dhaka, Bangladesh. We empower fast-growing online brands, digital retailers, photo studios, and advertising agencies across the United States, Europe, and Australia with high-volume, pixel-perfect image solutions.
+                {settings.aboutText ||
+                  'Pro Retouching is a premier offshore e-commerce photo editing and post-production studio operating from Dhaka, Bangladesh. We empower fast-growing online brands, digital retailers, photo studios, and advertising agencies across the United States, Europe, and Australia with high-volume, pixel-perfect image solutions.'}
               </p>
 
               <p className="text-slate-600 text-base leading-relaxed">
@@ -365,7 +418,7 @@ export const Home: React.FC = () => {
             {/* Right side 2-column checklist with orange check icons */}
             <div className="lg:col-span-7">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {WHY_CHOOSE_ITEMS.map((item, index) => (
+                {settings.whyChoose.map((item, index) => (
                   <div
                     key={index}
                     className="p-4 bg-white rounded-xl border border-slate-200/70 shadow-sm hover:border-amber-400 hover:shadow-md transition-all flex items-start gap-3.5 group"
@@ -395,7 +448,7 @@ export const Home: React.FC = () => {
       <section className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white py-12 shadow-inner">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {PRICE_STATS_STRIP.map((stat, idx) => (
+            {settings.priceHighlights.map((stat, idx) => (
               <div
                 key={idx}
                 className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all text-center sm:text-left flex flex-col justify-between"
@@ -443,6 +496,16 @@ export const Home: React.FC = () => {
             onSubmit={handleQuoteSubmit}
             className="mt-10 bg-[#143464] border border-blue-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl text-left"
           >
+            {/* Honeypot: hidden from humans, bots tend to fill it */}
+            <input
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              value={quoteHoneypot}
+              onChange={(e) => setQuoteHoneypot(e.target.value)}
+              className="absolute -left-[9999px] h-0 w-0 opacity-0"
+            />
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               {/* Service Dropdown */}
               <div>
@@ -454,9 +517,10 @@ export const Home: React.FC = () => {
                   onChange={(e) => setQuoteService(e.target.value)}
                   className="w-full bg-[#0A1E3D] border border-blue-700/60 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors"
                 >
-                  {SERVICES_LIST.map((srv) => (
-                    <option key={srv.id} value={srv.slug}>
-                      {srv.title} (from {srv.startingPrice})
+                  {services.map((srv) => (
+                    <option key={srv.slug} value={srv.slug}>
+                      {srv.title}
+                      {srv.startingPrice ? ` (from ${srv.startingPrice})` : ''}
                     </option>
                   ))}
                 </select>
@@ -659,9 +723,9 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-            {SNEAK_PEEK_COUNTERS.map((item, idx) => (
+            {stats.map((item, idx) => (
               <AnimatedCounter
-                key={idx}
+                key={item.id || idx}
                 value={item.value}
                 suffix={item.suffix}
                 label={item.label}

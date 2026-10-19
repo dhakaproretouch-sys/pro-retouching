@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronDown, Menu, X, ArrowRight, Sliders, Image, Sparkles } from 'lucide-react';
-import { SERVICES_LIST } from '../data/constants';
+import { useServices } from '../hooks/usePublic';
 
 export const Navbar: React.FC = () => {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
@@ -9,6 +9,7 @@ export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const { services } = useServices();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -144,9 +145,9 @@ export const Navbar: React.FC = () => {
                   </Link>
                 </div>
 
-                {SERVICES_LIST.map((service) => (
+                {services.map((service) => (
                   <Link
-                    key={service.id}
+                    key={service.slug}
                     to={`/services/${service.slug}`}
                     className="p-2.5 rounded-xl hover:bg-amber-50/70 group transition-colors flex items-start gap-3"
                   >
@@ -241,9 +242,9 @@ export const Navbar: React.FC = () => {
             <div className="pt-2 border-t border-slate-100">
               <span className="text-xs uppercase font-bold text-slate-400 px-3">Services</span>
               <div className="grid grid-cols-1 gap-1 mt-2 max-h-56 overflow-y-auto pr-1">
-                {SERVICES_LIST.slice(0, 8).map((srv) => (
+                {services.slice(0, 8).map((srv) => (
                   <Link
-                    key={srv.id}
+                    key={srv.slug}
                     to={`/services/${srv.slug}`}
                     className="py-1.5 px-3 text-sm text-slate-600 hover:bg-amber-50 hover:text-amber-700 rounded-md transition-colors"
                   >
@@ -254,7 +255,7 @@ export const Navbar: React.FC = () => {
                   to="/services"
                   className="py-1.5 px-3 text-sm font-semibold text-amber-600 hover:underline"
                 >
-                  View All 14 Services →
+                  View All {services.length} Services →
                 </Link>
               </div>
             </div>

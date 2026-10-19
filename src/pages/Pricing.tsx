@@ -10,10 +10,14 @@ import {
   Percent,
   HelpCircle,
 } from 'lucide-react';
-import { PRICING_PLANS, BULK_DISCOUNT_TIERS, FAQ_ITEMS } from '../data/constants';
+import { BULK_DISCOUNT_TIERS } from '../data/constants';
+import { SkeletonGrid } from '../components/Skeleton';
+import { usePricing, useFaqs } from '../hooks/usePublic';
 
 export const Pricing: React.FC = () => {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const { plans, loading: plansLoading } = usePricing();
+  const { faqs } = useFaqs();
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -39,8 +43,11 @@ export const Pricing: React.FC = () => {
       {/* Pricing Cards (3 Tables) */}
       <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-            {PRICING_PLANS.map((plan) => (
+          {plansLoading && plans.length === 0 ? (
+            <SkeletonGrid count={3} />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+              {plans.map((plan) => (
               <div
                 key={plan.id}
                 className={`rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 relative ${
@@ -134,8 +141,9 @@ export const Pricing: React.FC = () => {
                   </Link>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -217,7 +225,7 @@ export const Pricing: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            {FAQ_ITEMS.map((item, idx) => (
+            {faqs.map((item, idx) => (
               <div
                 key={idx}
                 className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition-all"
