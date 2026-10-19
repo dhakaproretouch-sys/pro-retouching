@@ -8,9 +8,9 @@ import { heroSlides } from '../data/heroSlides';
 // or slower (value is in milliseconds: 5000 = every 5 seconds).
 // ---------------------------------------------------------------------------
 const AUTOPLAY_MS = 5000;
-const CROSSFADE_MS = 1000;
-const KEN_BURNS_MS = AUTOPLAY_MS + CROSSFADE_MS;
-const KEN_BURNS_SCALE = 1.08;
+const CROSSFADE_MS = 0; // Disable crossfade animation for instant switch
+const KEN_BURNS_MS = 0; // Disable Ken Burns effect
+const KEN_BURNS_SCALE = 1; // No scaling
 const SWIPE_THRESHOLD_PX = 60;
 
 // Brand-colored fallback shown whenever a slide image is missing or fails to
@@ -64,14 +64,16 @@ export const HeroSlider = ({ children, className = '', slides: slidesProp }) => 
     [slideCount]
   );
 
-  // Autoplay: pauses on hover / when the hero leaves the viewport / reduced motion.
+  // Autoplay: pauses on hover / when the hero leaves the viewport.
+  // Reduced-motion users still get slide changes, just without animation
+  // (the crossfade/Ken Burns durations resolve to 0 above).
   useEffect(() => {
-    if (prefersReduced || isPointerInside || !isInView || slideCount < 2) return undefined;
+    if (isPointerInside || !isInView || slideCount < 2) return undefined;
     const timerId = window.setInterval(() => {
       setActiveIndex((index) => (index + 1) % slideCount);
     }, AUTOPLAY_MS);
     return () => window.clearInterval(timerId);
-  }, [prefersReduced, isPointerInside, isInView, slideCount]);
+  }, [isPointerInside, isInView, slideCount]);
 
   // Track whether the hero is on screen so keyboard shortcuts only work in view.
   useEffect(() => {
@@ -156,28 +158,24 @@ export const HeroSlider = ({ children, className = '', slides: slidesProp }) => 
       onPointerCancel={handlePointerCancel}
     >
       {/* ------------------------------------------------------------------
-          Slides: 1s crossfade + very slow Ken Burns zoom on the active one
+          Slides: 1s crossfade + very slow Ken Burns zoom on the active one.
+          NOTE: motion's `transition.duration` is in SECONDS, so the *_MS
+          constants are converted (value / 1000) before being passed.
           ------------------------------------------------------------------ */}
-      <div className="absolute inset-0">
-        <AnimatePresence initial={false}>
+      <div className="absolute inset-0 overflow-hidden">
+        <AnimatePresence initial={false} mode="wait">
           {slideCount > 0 && (
             <motion.div
               key={activeIndex}
               className="absolute inset-0"
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: prefersReduced ? 0 : CROSSFADE_MS, ease: 'easeInOut' }}
+              exit={{ opacity: 1 }}
+              transition={{ duration: 0 }}
             >
-              <motion.div
+              <div
                 className="absolute inset-0"
                 style={{ backgroundImage: FALLBACK_GRADIENTS[activeIndex % FALLBACK_GRADIENTS.length] }}
-                initial={{ scale: 1 }}
-                animate={{ scale: prefersReduced ? 1 : KEN_BURNS_SCALE }}
-                transition={{
-                  duration: prefersReduced ? 0 : KEN_BURNS_MS,
-                  ease: 'linear',
-                }}
               >
                 {!failedSlides[activeIndex] && (
                   <img
@@ -191,25 +189,16 @@ export const HeroSlider = ({ children, className = '', slides: slidesProp }) => 
                     onError={() => markSlideFailed(activeIndex)}
                   />
                 )}
-              </motion.div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       {/* ------------------------------------------------------------------
-          Colorful diagonal brand overlay + subtle dark layer for readability
+          Static content stays above the slider (gradient overlays removed
+          so the banner images show their natural colors)
           ------------------------------------------------------------------ */}
-      <div
-        className="absolute inset-0 bg-gradient-to-br from-orange-500/60 via-pink-500/55 to-violet-600/60"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-900/35 to-slate-900/60"
-        aria-hidden="true"
-      />
-
-      {/* Static content stays above the slider */}
       <div className="relative z-10 flex w-full items-center justify-center px-4 pb-12 pt-6 sm:px-6 sm:pb-14 lg:px-8">
         {children}
       </div>
