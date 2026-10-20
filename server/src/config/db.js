@@ -10,29 +10,51 @@ const READY_STATES = {
 
 export const getDbState = () => READY_STATES[mongoose.connection.readyState] ?? 'unknown';
 
+let cached = globalThis.__mongooseCache;
+if (!cached) {
+  cached = globalThis.__mongooseCache = { conn: null, promise: null, listenersBound: false };
+}
+
 /**
  * Connect to MongoDB. Resolves once connected, rejects on failure.
+ * The connection promise is cached so serverless invocations reuse the same
+ * connection instead of opening a new one on every cold/warm request.
  */
 export async function connectDB() {
-  mongoose.set('strictQuery', true);
+  if (cached.conn) return cached.conn;
 
-  mongoose.connection.on('connected', () => {
-    console.log(`✅ MongoDB connected: ${mongoose.connection.host}/${mongoose.connection.name}`);
-  });
+  if (!cached.listenersBound) {
+    mongoose.set('strictQuery', true);
 
-  mongoose.connection.on('error', (err) => {
-    console.error(`❌ MongoDB error: ${err.message}`);
-  });
+    mongoose.connection.on('connected', () => {
+      console.log(`✅ MongoDB connected: ${mongoose.connection.host}/${mongoose.connection.name}`);
+    });
 
-  mongoose.connection.on('disconnected', () => {
-    if (!isProd) console.warn('⚠️  MongoDB disconnected');
-  });
+    mongoose.connection.on('error', (err) => {
+      console.error(`❌ MongoDB error: ${err.message}`);
+    });
 
-  const conn = await mongoose.connect(env.MONGO_URI, {
-    serverSelectionTimeoutMS: 10000,
-  });
+    mongoose.connection.on('disconnected', () => {
+      if (!isProd) console.warn('⚠️  MongoDB disconnected');
+    });
 
-  return conn;
+    cached.listenersBound = true;
+  }
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(env.MONGO_URI, {
+      serverSelectionTimeoutMS: 10000,
+    });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (error) {
+    cached.promise = null;
+    throw error;
+  }
+
+  return cached.conn;
 }
 
 /**
@@ -40,5 +62,7 @@ export async function connectDB() {
  */
 export async function disconnectDB() {
   await mongoose.disconnect();
+  cached.conn = null;
+  cached.promise = null;
   console.log('MongoDB connection closed');
 }

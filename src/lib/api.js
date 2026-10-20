@@ -2,11 +2,17 @@ import axios from 'axios';
 
 /**
  * Shared axios instance for the whole app (public + admin).
- * - Base URL comes from VITE_API_URL (defaults to the local dev server).
+ * - Base URL comes from VITE_API_URL. In production, when it is unset we fall
+ *   back to the same-origin `/api` (the Vercel function), never to localhost.
+ * - In local development the default is the local dev server.
  * - withCredentials sends the httpOnly admin JWT cookie on every request.
  * - 401 responses (other than the login attempt itself) redirect to /admin/login.
  */
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const configuredBaseUrl = import.meta.env.VITE_API_URL?.trim();
+const fallbackBaseUrl = import.meta.env.PROD
+  ? '/api'
+  : 'http://localhost:5000/api';
+const baseURL = configuredBaseUrl || fallbackBaseUrl;
 
 export const api = axios.create({
   baseURL,
