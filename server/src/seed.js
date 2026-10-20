@@ -30,9 +30,9 @@ import {
  * ------------------------------------------------------------------ */
 
 const HERO_SLIDES = [
-  { image: '/images/hero1.jpeg', alt: 'E-commerce product photo editing' },
-  { image: '/images/hero2.jpeg', alt: 'Ghost mannequin and neck joint service' },
-  { image: '/images/hero3.png', alt: 'Professional photo retouching studio' },
+  { image: '/images/hero-slide-1.jpg', alt: 'E-commerce product photo editing' },
+  { image: '/images/hero-slide-2.jpg', alt: 'Ghost mannequin and neck joint service' },
+  { image: '/images/hero-slide-3.jpg', alt: 'Professional photo retouching studio' },
 ];
 
 const ASSET_HERO = '/images/hero.jpg';
@@ -53,9 +53,9 @@ const SERVICES = [
       'Marketplace compliant white and pure-gray background standards',
       'Consistent product alignment, margin ratios, and web compression',
     ],
-    image: ASSET_HERO,
-    beforeImage: ASSET_HERO,
-    afterImage: ASSET_HERO,
+    image: '/images/1690386320753.jpeg',
+    beforeImage: '/images/1690386320753.jpeg',
+    afterImage: '/images/1690386320753.jpeg',
   },
   {
     slug: 'ghost-mannequin',
@@ -68,9 +68,9 @@ const SERVICES = [
       'Symmetry correction, wrinkle smoothing, and shape warping',
       'Natural internal drop shadow for realistic fabric depth',
     ],
-    image: ASSET_SWEATER,
-    beforeImage: ASSET_SWEATER,
-    afterImage: ASSET_SWEATER,
+    image: '/images/1691595299886.jpeg',
+    beforeImage: '/images/1691595299886.jpeg',
+    afterImage: '/images/1691595299886.jpeg',
   },
   {
     slug: 'background-removal',
@@ -83,9 +83,9 @@ const SERVICES = [
       'Amazon FBA approved pure white background (RGB 255, 255, 255)',
       'High-resolution PNG transparent cutouts with alpha channels',
     ],
-    image: ASSET_SNEAKER,
-    beforeImage: ASSET_SNEAKER,
-    afterImage: ASSET_SNEAKER,
+    image: '/images/1693144321140.jpeg',
+    beforeImage: '/images/1693144321140.jpeg',
+    afterImage: '/images/1693144321140.jpeg',
   },
   {
     slug: 'photo-retouching',
@@ -98,9 +98,9 @@ const SERVICES = [
       'Diamond and gemstone brilliance enhancement',
       'Frequency separation for natural skin smoothing',
     ],
-    image: ASSET_BOTTLE,
-    beforeImage: ASSET_BOTTLE,
-    afterImage: ASSET_BOTTLE,
+    image: '/images/1698937341506.jpeg',
+    beforeImage: '/images/1698937341506.jpeg',
+    afterImage: '/images/1698937341506.jpeg',
   },
   {
     slug: 'color-correction',
@@ -113,9 +113,9 @@ const SERVICES = [
       'Exposure and white balance calibration across bulk catalogs',
       'Pattern overlay and fabric tone consistency',
     ],
-    image: ASSET_HERO,
-    beforeImage: ASSET_HERO,
-    afterImage: ASSET_HERO,
+    image: '/images/1743090273681.jpeg',
+    beforeImage: '/images/1743090273681.jpeg',
+    afterImage: '/images/1743090273681.jpeg',
   },
   {
     slug: 'shadow-reflection',
@@ -128,9 +128,9 @@ const SERVICES = [
       'High-end mirror and glass surface reflections',
       'Adjustable opacity, blur radius, and light angles',
     ],
-    image: ASSET_BOTTLE,
-    beforeImage: ASSET_BOTTLE,
-    afterImage: ASSET_BOTTLE,
+    image: '/images/1752247694469.jpeg',
+    beforeImage: '/images/1752247694469.jpeg',
+    afterImage: '/images/1752247694469.jpeg',
   },
   {
     slug: 'clipping-path',
@@ -143,9 +143,9 @@ const SERVICES = [
       'Embedded Photoshop clipping paths (EPS/TIFF/PSD)',
       'Accurate edge compensation preventing fringing',
     ],
-    image: ASSET_SNEAKER,
-    beforeImage: ASSET_SNEAKER,
-    afterImage: ASSET_SNEAKER,
+    image: '/images/1785505072566.jpeg',
+    beforeImage: '/images/1785505072566.jpeg',
+    afterImage: '/images/1785505072566.jpeg',
   },
   {
     slug: 'neck-joint',
@@ -158,9 +158,9 @@ const SERVICES = [
       'Removal of model hair and neck interference',
       'Crisp edge transitions on delicate knitwear',
     ],
-    image: ASSET_SWEATER,
-    beforeImage: ASSET_SWEATER,
-    afterImage: ASSET_SWEATER,
+    image: '/images/1787750124564.jpeg',
+    beforeImage: '/images/1787750124564.jpeg',
+    afterImage: '/images/1787750124564.jpeg',
   },
   {
     slug: 'image-masking',
@@ -173,9 +173,9 @@ const SERVICES = [
       'Preservation of semi-transparent organza, tulle, and veil fabrics',
       'Edge defringing and background color contamination removal',
     ],
-    image: ASSET_HERO,
-    beforeImage: ASSET_HERO,
-    afterImage: ASSET_HERO,
+    image: '/images/1788684056774.jpeg',
+    beforeImage: '/images/1788684056774.jpeg',
+    afterImage: '/images/1788684056774.jpeg',
   },
   {
     slug: 'raster-to-vector',
@@ -188,9 +188,9 @@ const SERVICES = [
       'Font matching or custom vector letter recreation',
       'Color separation for screen printing and embroidery',
     ],
-    image: ASSET_HERO,
-    beforeImage: ASSET_HERO,
-    afterImage: ASSET_HERO,
+    image: '/images/1789652964412.jpeg',
+    beforeImage: '/images/1789652964412.jpeg',
+    afterImage: '/images/1789652964412.jpeg',
   },
   {
     slug: 'graphic-design',
@@ -203,9 +203,9 @@ const SERVICES = [
       'Hero banners for Shopify and promotional landing pages',
       'Consistent typography, icons, and brand palette',
     ],
-    image: ASSET_HERO,
-    beforeImage: ASSET_HERO,
-    afterImage: ASSET_HERO,
+    image: '/images/1690386320753.jpeg',
+    beforeImage: '/images/1690386320753.jpeg',
+    afterImage: '/images/1690386320753.jpeg',
   },
   {
     slug: 'video-editing',
@@ -218,9 +218,9 @@ const SERVICES = [
       'Subtitle synchronization and feature callout text',
       'Color grading matching product catalog photos',
     ],
-    image: ASSET_HERO,
-    beforeImage: ASSET_HERO,
-    afterImage: ASSET_HERO,
+    image: '/images/1691595299886.jpeg',
+    beforeImage: '/images/1691595299886.jpeg',
+    afterImage: '/images/1691595299886.jpeg',
   },
   {
     slug: '3d-product-modeling',
@@ -233,9 +233,9 @@ const SERVICES = [
       'Studio virtual lighting setups and 4K renders',
       'Interactive 3D GLTF / USDZ formats for web AR',
     ],
-    image: ASSET_BOTTLE,
-    beforeImage: ASSET_BOTTLE,
-    afterImage: ASSET_BOTTLE,
+    image: '/images/1693144321140.jpeg',
+    beforeImage: '/images/1693144321140.jpeg',
+    afterImage: '/images/1693144321140.jpeg',
   },
   {
     slug: 'web-development',
@@ -248,9 +248,9 @@ const SERVICES = [
       'Mobile-first responsive architecture',
       'Conversion rate optimization (CRO) checkout flows',
     ],
-    image: ASSET_STUDIO,
-    beforeImage: ASSET_STUDIO,
-    afterImage: ASSET_STUDIO,
+    image: '/images/1698937341506.jpeg',
+    beforeImage: '/images/1698937341506.jpeg',
+    afterImage: '/images/1698937341506.jpeg',
   },
 ];
 
@@ -351,12 +351,12 @@ const FAQS = [
 
 // src/data/constants.ts → PORTFOLIO_WORKS
 const WORKS = [
-  { title: 'Luxury Leather Handbag', category: 'Clipping Path', image: ASSET_HERO },
-  { title: 'Cable Knit Crewneck Sweater', category: 'Ghost Mannequin', image: ASSET_SWEATER },
-  { title: 'Urban Designer Sneaker', category: 'Retouching', image: ASSET_SNEAKER },
-  { title: 'Organic Serum Bottle', category: 'Shadow', image: ASSET_BOTTLE },
-  { title: 'Fashion Studio Retouching Suite', category: 'Color Correction', image: ASSET_STUDIO },
-  { title: 'Designer Sunglasses & Accessories', category: 'Clipping Path', image: ASSET_HERO },
+  { title: 'Luxury Leather Handbag', category: 'Clipping Path', image: '/images/1690386320753.jpeg' },
+  { title: 'Cable Knit Crewneck Sweater', category: 'Ghost Mannequin', image: '/images/1691595299886.jpeg' },
+  { title: 'Urban Designer Sneaker', category: 'Retouching', image: '/images/1693144321140.jpeg' },
+  { title: 'Organic Serum Bottle', category: 'Shadow', image: '/images/1698937341506.jpeg' },
+  { title: 'Fashion Studio Retouching Suite', category: 'Color Correction', image: '/images/1743090273681.jpeg' },
+  { title: 'Designer Sunglasses & Accessories', category: 'Clipping Path', image: '/images/1752247694469.jpeg' },
 ];
 
 // src/data/constants.ts → COMPANY_INFO + WHY_CHOOSE_ITEMS + PRICE_STATS_STRIP
