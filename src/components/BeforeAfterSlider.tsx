@@ -16,7 +16,6 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
   beforeLabel = 'Before',
   afterLabel = 'After',
   aspectRatio = 'aspect-[4/3]',
-  variant = 'standard',
 }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -70,7 +69,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
           alt={afterLabel}
           fallbackLabel={`After: ${afterLabel}`}
           gradientClass="from-slate-100 via-emerald-50/50 to-slate-200"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-contain object-center"
         />
         <div className="absolute top-4 right-4 bg-emerald-600/90 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow-sm pointer-events-none z-10">
           {afterLabel}
@@ -91,13 +90,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             alt={beforeLabel}
             fallbackLabel={`Before: ${beforeLabel}`}
             gradientClass="from-slate-200 via-slate-100 to-amber-50/40"
-            className={`w-full h-full object-cover object-center ${
-              variant === 'cutout'
-                ? 'brightness-90 contrast-90 sepia-[0.15]'
-                : variant === 'retouch'
-                ? 'brightness-95 contrast-95 saturate-75 filter-none'
-                : ''
-            }`}
+            className="w-full h-full object-contain object-center"
           />
           <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow-sm pointer-events-none z-10">
             {beforeLabel}

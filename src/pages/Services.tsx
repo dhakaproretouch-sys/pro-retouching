@@ -1,24 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles, Check, Clock, Tag } from 'lucide-react';
+import { ArrowRight, Sparkles, Check, Clock } from 'lucide-react';
 import { SafeImage } from '../components/SafeImage';
 import { SkeletonGrid } from '../components/Skeleton';
 import { useServices } from '../hooks/usePublic';
 
 export const Services: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const { services, loading } = useServices();
-
-  // Derive category pills from live data (fallback list already carries categories)
-  const categories = [
-    'All',
-    ...Array.from(new Set(services.map((s) => s.category).filter(Boolean))),
-  ];
-
-  const filteredServices =
-    selectedCategory === 'All'
-      ? services
-      : services.filter((s) => s.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -34,45 +22,28 @@ export const Services: React.FC = () => {
           <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
             From basic 100% hand-drawn vector clipping paths to intricate ghost mannequin neck joints, luxury jewelry polishing, and 3D product rendering.
           </p>
-
-          {/* Category Filter Pills (Functional Buttons) */}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-[#0F2A55] text-white shadow-md'
-                    : 'bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50 hover:text-slate-900'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 
       {/* Services Grid */}
       <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {loading && filteredServices.length === 0 ? (
+          {loading && services.length === 0 ? (
             <SkeletonGrid count={6} />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredServices.map((service) => (
+              {services.map((service) => (
               <div
                 key={service.id}
                 className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl hover:border-amber-300 transition-all flex flex-col justify-between group"
               >
                 {/* Image Preview */}
-                <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
+                <div className="relative aspect-[16/10] bg-slate-100">
                   <SafeImage
                     src={service.afterImage}
                     alt={service.title}
                     fallbackLabel={service.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain"
                   />
                   <div className="absolute top-3 left-3 bg-[#0F2A55]/85 backdrop-blur-sm text-white text-[11px] font-semibold px-2.5 py-1 rounded-md">
                     {service.category}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Eye, Clock, Sparkles, X, ArrowRight, Check } from 'lucide-react';
-import { BeforeAfterSlider } from '../components/BeforeAfterSlider';
+import { Eye, Clock, Sparkles, X } from 'lucide-react';
+import { SafeImage } from '../components/SafeImage';
 import { SkeletonGrid } from '../components/Skeleton';
 import { useWorks } from '../hooks/usePublic';
 
@@ -18,20 +18,8 @@ type WorkItem = {
 };
 
 export const OurWorks: React.FC = () => {
-  const [selectedFilter, setSelectedFilter] = useState('All');
   const [activeModalItem, setActiveModalItem] = useState<WorkItem | null>(null);
   const { works, loading } = useWorks();
-
-  // Derive filter tabs from live data (fallback list already carries categories)
-  const filterTabs = [
-    'All',
-    ...Array.from(new Set(works.map((w) => w.category).filter(Boolean))),
-  ];
-
-  const filteredItems =
-    selectedFilter === 'All'
-      ? works
-      : works.filter((item) => item.category === selectedFilter);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -47,53 +35,28 @@ export const OurWorks: React.FC = () => {
           <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
             Real before and after image post-production delivered for global footwear brands, luxury fashion labels, and high-volume Amazon sellers.
           </p>
-
-          {/* Filter Bar */}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
-            {filterTabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setSelectedFilter(tab)}
-                className={`px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all ${
-                  selectedFilter === tab
-                    ? 'bg-[#0F2A55] text-white shadow-md'
-                    : 'bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50 hover:text-slate-900'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 
       {/* Gallery Grid */}
       <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {loading && filteredItems.length === 0 ? (
+          {loading && works.length === 0 ? (
             <SkeletonGrid count={6} />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredItems.map((item) => (
+              {works.map((item) => (
                 <div
                   key={item.id}
                   className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group"
                 >
-                  {/* Image Container with Slider Preview */}
+                  {/* Image Container */}
                   <div className="p-3 bg-slate-50">
-                    <BeforeAfterSlider
-                      beforeImage={item.beforeImage}
-                      afterImage={item.afterImage}
-                      beforeLabel="Before"
-                      afterLabel="After"
-                      aspectRatio="aspect-[4/3]"
-                      variant={
-                        item.category === 'Clipping Path'
-                          ? 'cutout'
-                          : item.category === 'Retouching'
-                          ? 'retouch'
-                          : 'standard'
-                      }
+                    <SafeImage
+                      src={item.afterImage}
+                      alt={item.title}
+                      fallbackLabel={item.title}
+                      className="block w-full h-auto object-contain"
                     />
                   </div>
 
@@ -185,12 +148,11 @@ export const OurWorks: React.FC = () => {
             </div>
 
             <div className="rounded-2xl overflow-hidden bg-slate-100">
-              <BeforeAfterSlider
-                beforeImage={activeModalItem.beforeImage}
-                afterImage={activeModalItem.afterImage}
-                beforeLabel="Original RAW"
-                afterLabel="Retouched Deliverable"
-                aspectRatio="aspect-[16/10]"
+              <SafeImage
+                src={activeModalItem.afterImage}
+                alt={activeModalItem.title}
+                fallbackLabel={activeModalItem.title}
+                className="block w-full h-auto object-contain"
               />
             </div>
 

@@ -68,9 +68,9 @@ const SERVICES = [
       'Symmetry correction, wrinkle smoothing, and shape warping',
       'Natural internal drop shadow for realistic fabric depth',
     ],
-    image: '/images/1691595299886.jpeg',
-    beforeImage: '/images/1691595299886.jpeg',
-    afterImage: '/images/1691595299886.jpeg',
+    image: '/images/sweater.jpg',
+    beforeImage: '/images/sweater.jpg',
+    afterImage: '/images/sweater.jpg',
   },
   {
     slug: 'background-removal',
@@ -128,9 +128,9 @@ const SERVICES = [
       'High-end mirror and glass surface reflections',
       'Adjustable opacity, blur radius, and light angles',
     ],
-    image: '/images/1752247694469.jpeg',
-    beforeImage: '/images/1752247694469.jpeg',
-    afterImage: '/images/1752247694469.jpeg',
+    image: '/images/1687185290899.jpeg',
+    beforeImage: '/images/1687185290899.jpeg',
+    afterImage: '/images/1687185290899.jpeg',
   },
   {
     slug: 'clipping-path',
@@ -352,11 +352,11 @@ const FAQS = [
 // src/data/constants.ts → PORTFOLIO_WORKS
 const WORKS = [
   { title: 'Luxury Leather Handbag', category: 'Clipping Path', image: '/images/1690386320753.jpeg' },
-  { title: 'Cable Knit Crewneck Sweater', category: 'Ghost Mannequin', image: '/images/1691595299886.jpeg' },
+  { title: 'Cable Knit Crewneck Sweater', category: 'Ghost Mannequin', image: '/images/sweater.jpg' },
   { title: 'Urban Designer Sneaker', category: 'Retouching', image: '/images/1693144321140.jpeg' },
   { title: 'Organic Serum Bottle', category: 'Shadow', image: '/images/1698937341506.jpeg' },
   { title: 'Fashion Studio Retouching Suite', category: 'Color Correction', image: '/images/1743090273681.jpeg' },
-  { title: 'Designer Sunglasses & Accessories', category: 'Clipping Path', image: '/images/1752247694469.jpeg' },
+  { title: 'Designer Sunglasses & Accessories', category: 'Clipping Path', image: '/images/1687185290899.jpeg' },
 ];
 
 // src/data/constants.ts → COMPANY_INFO + WHY_CHOOSE_ITEMS + PRICE_STATS_STRIP
