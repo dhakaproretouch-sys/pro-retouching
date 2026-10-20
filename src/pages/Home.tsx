@@ -23,13 +23,13 @@ import {
   ASSET_SNEAKER,
   ASSET_BOTTLE,
 } from '../data/constants';
-import { BeforeAfterSlider } from '../components/BeforeAfterSlider';
 import { AnimatedCounter } from '../components/AnimatedCounter';
 import { SafeImage } from '../components/SafeImage';
 import { HeroSlider } from '../components/HeroSlider';
+import { WorkCard } from '../components/WorkCard';
 import { useToast } from '../components/Toast';
 import { SkeletonGrid } from '../components/Skeleton';
-import { useSlides, useServices, useLogos, useStats, useSettings } from '../hooks/usePublic';
+import { useSlides, useServices, useLogos, useStats, useSettings, useWorks } from '../hooks/usePublic';
 import { postQuote } from '../lib/publicApi';
 import { getApiErrorMessage } from '../lib/api';
 
@@ -42,6 +42,7 @@ export const Home: React.FC = () => {
   const { logos } = useLogos();
   const { stats } = useStats();
   const { settings } = useSettings();
+  const { works: worksData, loading: loadingWorks } = useWorks();
 
   // Quote Form State
   const [quoteService, setQuoteService] = useState('clipping-path');
@@ -88,6 +89,9 @@ export const Home: React.FC = () => {
 
   // Primary 7 showcase services as required by section 6
   const showcaseServices = services.slice(0, 7);
+
+  // First 6 portfolio works for the Home preview section
+  const previewWorks = worksData.slice(0, 6);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -613,21 +617,16 @@ export const Home: React.FC = () => {
                     isEven ? 'lg:flex-row-reverse' : ''
                   }`}
                 >
-                  {/* Slider Column */}
+                  {/* Image Column */}
                   <div className={`lg:col-span-6 ${isEven ? 'lg:order-2' : 'lg:order-1'}`}>
-                    <BeforeAfterSlider
-                      beforeImage={service.beforeImage}
-                      afterImage={service.afterImage}
-                      beforeLabel={service.beforeLabel || 'Raw / Original'}
-                      afterLabel={service.afterLabel || 'Pro Retouched'}
-                      variant={
-                        service.id === 'background-removal' || service.id === 'clipping-path'
-                          ? 'cutout'
-                          : service.id === 'photo-retouching'
-                          ? 'retouch'
-                          : 'standard'
-                      }
-                    />
+                    <div className="rounded-2xl overflow-hidden shadow-lg border border-slate-200/80 bg-slate-100">
+                      <SafeImage
+                        src={service.afterImage}
+                        alt={service.title}
+                        fallbackLabel={service.title}
+                        className="block w-full h-auto object-contain"
+                      />
+                    </div>
                     <div className="flex items-center justify-between text-xs text-slate-500 mt-2 px-1">
                       <span>Interactive Comparison</span>
                       <span className="font-semibold text-amber-600">
@@ -699,6 +698,45 @@ export const Home: React.FC = () => {
               className="inline-flex items-center gap-2.5 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold text-base rounded-xl shadow-lg shadow-amber-500/25 transition-all hover:scale-[1.02]"
             >
               <span>Explore All 14 Services</span>
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 7B: OUR WORKS PREVIEW
+          ========================================================================= */}
+      <section className="py-20 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-amber-600 font-bold text-xs uppercase tracking-wider block mb-2">
+              Selected Portfolio
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-[#0F2A55] tracking-tight">
+              Our Recent Works
+            </h2>
+            <p className="mt-2 text-slate-600 text-sm sm:text-base">
+              A snapshot of real commercial post-production delivered for global footwear brands, fashion labels, and high-volume Amazon sellers.
+            </p>
+          </div>
+
+          {loadingWorks && previewWorks.length === 0 ? (
+            <SkeletonGrid count={6} />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {previewWorks.map((work) => (
+                <WorkCard key={work.id} item={work} />
+              ))}
+            </div>
+          )}
+
+          <div className="mt-14 text-center">
+            <Link
+              to="/our-works"
+              className="inline-flex items-center gap-2.5 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold text-base rounded-xl shadow-lg shadow-amber-500/25 transition-all hover:scale-[1.02]"
+            >
+              <span>View All Works</span>
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
