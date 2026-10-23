@@ -116,7 +116,7 @@ export const Home: React.FC = () => {
 
             <div className="mt-4 flex flex-col items-center">
               <p className="text-base sm:text-lg lg:text-xl font-medium text-white">
-                The <strong className="font-extrabold">Matchless</strong> Image/Video Post-production Service for E-commerce Sellers
+                The <strong className="font-extrabold">Matchless</strong> Image Post-production Service for E-commerce Sellers
               </p>
               {/* Hand-drawn curved underline */}
               <svg

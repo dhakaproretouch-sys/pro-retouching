@@ -1,13 +1,9 @@
 /**
  * Seed script: `npm run seed`
  *
- * - Creates the admin account from ADMIN_EMAIL / ADMIN_PASSWORD (skips if it exists)
- * - Inserts the default website content copied from the frontend data files
- *   (src/data/constants.ts + src/data/heroSlides.js) so the site looks identical
- *   at first.
- *
- * Safe to run twice (or many times): everything is upserted on a unique key,
- * so no duplicates are ever created.
+ * Creates the admin account from ADMIN_EMAIL / ADMIN_PASSWORD (skips if it exists)
+ * Inserts the default website content copied from the frontend data files.
+ * Safe to run twice.
  */
 import bcrypt from 'bcryptjs';
 import { env } from './config/env.js';
@@ -25,21 +21,13 @@ import {
   SiteSettings,
 } from './models/index.js';
 
-/* ------------------------------------------------------------------ *
- * Default content (mirrors src/data/constants.ts and heroSlides.js)
- * ------------------------------------------------------------------ */
+/* Default content */
 
 const HERO_SLIDES = [
-  { image: '/images/hero-slide-1.jpg', alt: 'E-commerce product photo editing' },
-  { image: '/images/hero-slide-2.jpg', alt: 'Ghost mannequin and neck joint service' },
-  { image: '/images/hero-slide-3.jpg', alt: 'Professional photo retouching studio' },
+  { image: '/images/hero-slide-1.jpg', alt: 'E-commerce product photo editing service showcase' },
+  { image: '/images/hero-slide-2.jpg', alt: 'Ghost mannequin and neck joint apparel editing service' },
+  { image: '/images/hero-slide-3.jpg', alt: 'Professional photo retouching studio workspace' },
 ];
-
-const ASSET_HERO = '/images/hero.jpg';
-const ASSET_STUDIO = '/images/studio.jpg';
-const ASSET_SWEATER = '/images/sweater.jpg';
-const ASSET_SNEAKER = '/images/sneaker.jpg';
-const ASSET_BOTTLE = '/images/bottle.jpg';
 
 const SERVICES = [
   {
@@ -95,8 +83,8 @@ const SERVICES = [
     bullets: [
       'Dust, lint, scratch, and fingerprint elimination',
       'Leather texture enhancement and wrinkle reduction',
-      'Diamond and gemstone brilliance enhancement',
-      'Frequency separation for natural skin smoothing',
+      'Product surface polish and detail sharpening',
+      'Natural-looking results with texture preservation',
     ],
     image: '/images/1698937341506.jpeg',
     beforeImage: '/images/1698937341506.jpeg',
@@ -111,7 +99,7 @@ const SERVICES = [
       'True-to-life Pantone and Hex swatch color matching',
       'Multi-color variant generation from a single base photograph',
       'Exposure and white balance calibration across bulk catalogs',
-      'Pattern overlay and fabric tone consistency',
+      'Consistent color grading for catalog uniformity',
     ],
     image: '/images/1743090273681.jpeg',
     beforeImage: '/images/1743090273681.jpeg',
@@ -136,12 +124,12 @@ const SERVICES = [
     slug: 'clipping-path',
     title: 'Image Cut-out / Clipping Path',
     shortDesc: 'Handmade vector clipping paths for simple, medium, complex, and super-complex items.',
-    description: 'From simple geometric packaging to intricate bicycles, chain necklaces, and wire mesh furniture, we provide multi-path clipping paths that allow art directors to isolate individual parts and materials with zero loss of vector sharpness.',
+    description: 'From simple geometric packaging to intricate products with fine details, we provide multi-path clipping paths that allow precise isolation with zero loss of detail. Every path is hand-drawn by skilled Photoshop artists.',
     bullets: [
-      'Simple to super-complex multi-path layering',
-      'Zero automated algorithms — 100% human-crafted accuracy',
-      'Embedded Photoshop clipping paths (EPS/TIFF/PSD)',
-      'Accurate edge compensation preventing fringing',
+      'Simple to complex multi-path layering',
+      '100% human-crafted for maximum accuracy',
+      'Clean edges with no fringing or artifacts',
+      'Ready for any background or transparent output',
     ],
     image: '/images/1785505072566.jpeg',
     beforeImage: '/images/1785505072566.jpeg',
@@ -151,11 +139,11 @@ const SERVICES = [
     slug: 'neck-joint',
     title: 'Neck Joint Service',
     shortDesc: 'Dedicated collar and neckline replacement for apparel brands and fashion catalog workflows.',
-    description: 'A specialized sub-service of ghost mannequin where our editors attach inner collar tags, size prints, and interior neck fabrics with realistic textile folds and lighting.',
+    description: 'A specialized service for apparel where we attach inner collar tags, size prints, and interior neck fabrics with realistic textile folds and lighting for a seamless ghost mannequin look.',
     bullets: [
       'Collar tag alignment and perspective correction',
       'Lining tone and pattern matching',
-      'Removal of model hair and neck interference',
+      'Natural fabric fold recreation',
       'Crisp edge transitions on delicate knitwear',
     ],
     image: '/images/1787750124564.jpeg',
@@ -166,12 +154,12 @@ const SERVICES = [
     slug: 'image-masking',
     title: 'Image Masking',
     shortDesc: 'Alpha channel, hair masking, fur, and transparent fabric isolation where Pen Tool cannot reach.',
-    description: 'Fine flyaway model hair, animal fur coats, chiffon gowns, and semi-transparent smoke or glass require advanced channel masking and refinement techniques. We extract every strand without leaving halos or muddy outlines.',
+    description: 'Fine flyaway model hair, animal fur coats, chiffon gowns, and semi-transparent fabrics require advanced channel masking techniques. We extract every strand without leaving halos or muddy outlines.',
     bullets: [
       'Advanced hair and fur strand isolation',
       'Alpha channel and color range masking',
-      'Preservation of semi-transparent organza, tulle, and veil fabrics',
-      'Edge defringing and background color contamination removal',
+      'Preservation of semi-transparent fabrics',
+      'Clean edges with no halos or fringing',
     ],
     image: '/images/1788684056774.jpeg',
     beforeImage: '/images/1788684056774.jpeg',
@@ -181,12 +169,12 @@ const SERVICES = [
     slug: 'raster-to-vector',
     title: 'Raster to Vector Conversion',
     shortDesc: 'Redrawing low-resolution logos, product schematics, and artwork into infinitely scalable SVG/AI vector files.',
-    description: 'Turn pixelated JPEG and PNG logos, badges, technical drawings, and sketches into clean, infinitely scalable vector artwork. Every line, gradient, and anchor point is plotted manually by vector illustration artists.',
+    description: 'Turn pixelated JPEG and PNG logos, badges, and artwork into clean, infinitely scalable vector files. Every element is manually traced for maximum precision and scalability.',
     bullets: [
       'Manual vector tracing in Adobe Illustrator',
       'Scalable EPS, SVG, PDF, and AI delivery files',
-      'Font matching or custom vector letter recreation',
-      'Color separation for screen printing and embroidery',
+      'Clean paths with precise anchor points',
+      'Ready for print and web use',
     ],
     image: '/images/1789652964412.jpeg',
     beforeImage: '/images/1789652964412.jpeg',
@@ -196,12 +184,12 @@ const SERVICES = [
     slug: 'graphic-design',
     title: 'Graphic Design',
     shortDesc: 'Amazon A+ content, lifestyle banners, product infographics, and e-commerce marketing collaterals.',
-    description: 'Elevate your conversion rate with persuasive visual marketing assets: Amazon EBC / A+ modules, benefit callout infographics, dimension overlays, and social media advertising creatives.',
+    description: 'Elevate your conversion rate with persuasive visual marketing assets: Amazon A+ content modules, feature callouts, infographics, and promotional banners designed to drive sales.',
     bullets: [
       'Amazon A+ Content and Brand Story modules',
-      'Feature callout infographics and dimension diagrams',
-      'Hero banners for Shopify and promotional landing pages',
-      'Consistent typography, icons, and brand palette',
+      'Feature callout infographics',
+      'Banner designs for e-commerce platforms',
+      'Brand-consistent design assets',
     ],
     image: '/images/1690386320753.jpeg',
     beforeImage: '/images/1690386320753.jpeg',
@@ -211,12 +199,12 @@ const SERVICES = [
     slug: 'video-editing',
     title: 'E-commerce Video Editing',
     shortDesc: 'Polished 360-spin video trimming, color grading, pacing, and engaging shorts for TikTok, Reels & Amazon.',
-    description: 'Modern shoppers buy motion. We edit product unboxing videos, 360 turntable spins, social video ads, and Amazon video hero headers with clean cuts, captions, smooth transitions, and background audio.',
+    description: 'Modern shoppers buy motion. We edit product videos, 360-degree spins, and promotional clips with clean cuts, professional color grading, and platform-optimized formats.',
     bullets: [
-      '360-degree turntable video stabilization and speed ramping',
-      'Social-first aspect ratios (9:16, 1:1, 16:9)',
-      'Subtitle synchronization and feature callout text',
-      'Color grading matching product catalog photos',
+      '360-degree product video editing',
+      'Social media optimized formats',
+      'Color grading and stabilization',
+      'Clean, professional final output',
     ],
     image: '/images/1691595299886.jpeg',
     beforeImage: '/images/1691595299886.jpeg',
@@ -226,12 +214,12 @@ const SERVICES = [
     slug: '3d-product-modeling',
     title: '3D Product Modeling & Rendering',
     shortDesc: 'Photorealistic 3D CAD modeling, texturing, and angle rendering before physical production starts.',
-    description: 'Create realistic 3D product renders from photos or CAD drawings. Render limitless photorealistic angles, exploded views, and packaging renders without shipping physical prototypes to a photo studio.',
+    description: 'Create realistic 3D product renders from photos or CAD drawings. Render photorealistic angles for e-commerce use without expensive photoshoots.',
     bullets: [
-      'High-poly 3D modeling and UV mapping',
-      'PBR material texturing (glass, metals, fabrics, plastics)',
-      'Studio virtual lighting setups and 4K renders',
-      'Interactive 3D GLTF / USDZ formats for web AR',
+      'Photorealistic 3D modeling',
+      'PBR material texturing',
+      'Multiple angle renders',
+      'High-resolution output files',
     ],
     image: '/images/1693144321140.jpeg',
     beforeImage: '/images/1693144321140.jpeg',
@@ -241,12 +229,12 @@ const SERVICES = [
     slug: 'web-development',
     title: 'E-commerce Web Development',
     shortDesc: 'Custom Shopify, WooCommerce, and headless e-commerce frontend development for modern brands.',
-    description: 'Complementing our visual services, our web engineers build high-performance e-commerce storefronts on Shopify, WooCommerce, and modern React stacks optimized for lightning-fast conversions.',
+    description: 'Our web development team builds high-performance e-commerce storefronts optimized for conversions, speed, and seamless user experience.',
     bullets: [
-      'Custom Shopify theme design and customization',
-      'Speed optimization achieving 90+ Google PageSpeed scores',
-      'Mobile-first responsive architecture',
-      'Conversion rate optimization (CRO) checkout flows',
+      'Custom e-commerce development',
+      'Mobile-responsive design',
+      'Performance optimization',
+      'Conversion-focused implementation',
     ],
     image: '/images/1698937341506.jpeg',
     beforeImage: '/images/1698937341506.jpeg',
@@ -276,7 +264,7 @@ const PRICING_PLANS = [
     isPopular: true,
     features: [
       'Dust, Scratch & Blemish Removal',
-      'Skin & Fabric Smoothing',
+      'Surface Polishing',
       'Natural Drop Shadow or Reflection',
       'Color Calibration & Matching',
       'Clipping Path Included',
@@ -290,10 +278,10 @@ const PRICING_PLANS = [
     unit: 'per image',
     isPopular: false,
     features: [
-      'Front & Back Collar Joint Merging',
-      'Sleeve & Hem Depth Alignment',
+      'Front & Back Neck Joint Merging',
+      'Sleeve & Hem Alignment',
       'Wrinkle Smoothing & Shape Correction',
-      'Internal Fabric Shadow Creation',
+      'Natural Shadow Creation',
       'Pure White Background Included',
       'Brand Label Preservation',
       '24-Hour Delivery Guarantee',
@@ -301,7 +289,6 @@ const PRICING_PLANS = [
   },
 ];
 
-// src/data/constants.ts → SNEAK_PEEK_COUNTERS
 const STATS = [
   { value: 50, suffix: '+', label: 'Expert Designers' },
   { value: 100000, suffix: '+', label: 'Images Processed' },
@@ -311,7 +298,6 @@ const STATS = [
   { value: 10000, suffix: '+', label: 'Hours of Work' },
 ];
 
-// src/data/constants.ts → MARKETPLACE_LOGOS (image filled in later via the admin)
 const CLIENT_LOGOS = [
   { name: 'Amazon', image: '' },
   { name: 'eBay', image: '' },
@@ -321,7 +307,6 @@ const CLIENT_LOGOS = [
   { name: 'Fiverr', image: '' },
 ];
 
-// src/data/constants.ts → FAQ_ITEMS
 const FAQS = [
   {
     question: 'How do I send my test images for the Free Trial?',
@@ -329,15 +314,15 @@ const FAQS = [
   },
   {
     question: 'What is your typical turnaround time?',
-    answer: 'Our standard delivery time is 12 to 24 hours for batches up to 500 images. For urgent deadlines, we offer an expedited 4-hour or 8-hour rush turnaround. Because our studio operates 3 shifts per day (24/5), work continues while your local team sleeps.',
+    answer: 'Our standard delivery time is 12 to 24 hours for batches up to 500 images. For urgent deadlines, we offer expedited turnaround options. Because our studio operates 3 shifts per day (24/5), work continues while your local team sleeps.',
   },
   {
     question: 'Do you use automated AI tools or real human editors?',
-    answer: 'All clipping paths, ghost mannequin joints, and high-end retouching are 100% hand-crafted by professional graphic designers using Adobe Photoshop and Wacom tablets. Automated AI tools often chew edges, blur textures, and miss intricate details; our human precision ensures marketplace-ready results every time.',
+    answer: 'All clipping paths, ghost mannequin joints, and high-end retouching are 100% hand-crafted by professional graphic designers using Adobe Photoshop and Wacom tablets. We rely on human precision to ensure marketplace-ready results every time.',
   },
   {
     question: 'How are my files and intellectual property protected?',
-    answer: 'We sign strict Non-Disclosure Agreements (NDAs) with all clients. Your files are stored on secure encrypted storage and are never published, shared with third parties, or used in our public portfolio without your explicit written authorization.',
+    answer: 'We sign strict Non-Disclosure Agreements (NDAs) with all clients. Your files are stored securely and are never published, shared with third parties, or used in our public portfolio without your explicit written authorization.',
   },
   {
     question: 'What payment methods and invoicing terms do you accept?',
@@ -345,39 +330,35 @@ const FAQS = [
   },
   {
     question: 'What happens if I need revisions on edited images?',
-    answer: 'We provide 100% free unlimited revisions until you are completely satisfied with the results. Simply reply to our delivery email or ping us on WhatsApp/Skype with your feedback.',
+    answer: 'We provide 100% free unlimited revisions until you are completely satisfied with the results. Simply reply with your feedback and we\'ll make the adjustments promptly.',
   },
 ];
 
-// src/data/constants.ts → PORTFOLIO_WORKS
 const WORKS = [
   { title: 'Luxury Leather Handbag', category: 'Clipping Path', image: '/images/1690386320753.jpeg' },
   { title: 'Cable Knit Crewneck Sweater', category: 'Ghost Mannequin', image: '/images/sweater.jpg' },
   { title: 'Urban Designer Sneaker', category: 'Retouching', image: '/images/1693144321140.jpeg' },
   { title: 'Organic Serum Bottle', category: 'Shadow', image: '/images/1698937341506.jpeg' },
-  { title: 'Fashion Studio Retouching Suite', category: 'Color Correction', image: '/images/1743090273681.jpeg' },
-  { title: 'Designer Sunglasses & Accessories', category: 'Clipping Path', image: '/images/1687185290899.jpeg' },
+  { title: 'Fashion Apparel Collection', category: 'Color Correction', image: '/images/1743090273681.jpeg' },
+  { title: 'Designer Sunglasses', category: 'Clipping Path', image: '/images/1687185290899.jpeg' },
 ];
 
-// src/data/constants.ts → COMPANY_INFO + WHY_CHOOSE_ITEMS + PRICE_STATS_STRIP
 const SITE_SETTINGS = {
   key: 'site',
   siteName: 'Pro Retouching',
   tagline: 'Effortless Image Editing for E-commerce',
   phone: '+880 1712-345678',
-  whatsapp: '+8801712345678',
+  whatsapp: '01577726116',
   email: 'support@proretouching.com',
   address: 'House 42, Road 11, Sector 4, Uttara, Dhaka-1230, Bangladesh',
   social: {
     facebook: 'https://facebook.com',
     linkedin: 'https://linkedin.com',
     skype: 'live:proretouching_bd',
-    whatsapp: '+8801712345678',
+    whatsapp: '01577726116',
   },
-  footerText:
-    'Effortless Image Editing for E-commerce. High-volume, hand-crafted image and video post-production for global e-commerce sellers, Amazon merchants, and fashion houses.',
-  aboutText:
-    'Founded with a mission to bridge the gap between expensive Western production studios and slow, unreliable freelancing networks, Pro Retouching operates as an integrated offshore production extension for global retailers, photo studios, and creative agencies.',
+  footerText: 'Effortless Image Editing for E-commerce. High-volume, hand-crafted image and video post-production for global e-commerce sellers.',
+  aboutText: 'Pro Retouching is a premier offshore e-commerce photo editing and post-production studio operating from Dhaka, Bangladesh. We empower fast-growing online brands, digital retailers, photo studios, and advertising agencies across the United States, Europe, and Australia with high-volume, pixel-perfect image solutions.',
   whyChoose: [
     { title: '20–50% Cost Saving', desc: 'Competitive offshore pricing from Bangladesh compared to in-house studio overheads.' },
     { title: 'Faster Turnaround', desc: 'Guaranteed 12–24 hour delivery with an optional 4-hour expedited rush protocol.' },
@@ -400,10 +381,7 @@ const SITE_SETTINGS = {
   ],
 };
 
-/* ------------------------------------------------------------------ *
- * Seed helpers
- * ------------------------------------------------------------------ */
-
+/* Seed helpers */
 const created = [];
 const existing = [];
 
@@ -426,9 +404,7 @@ async function seedAdmin() {
 
   const password = env.ADMIN_PASSWORD;
   if (!password || password.length < 6) {
-    throw new Error(
-      'ADMIN_PASSWORD is missing or too short (min 6 chars). Set it in server/.env, then re-run `npm run seed`.'
-    );
+    throw new Error('ADMIN_PASSWORD is missing or too short (min 6 chars).');
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
@@ -440,10 +416,8 @@ async function run() {
   console.log('🌱 Seeding database...\n');
   await connectDB();
 
-  // 1. Admin account
   await seedAdmin();
 
-  // 2. Hero slides
   for (const [index, slide] of HERO_SLIDES.entries()) {
     await upsert(HeroSlide, `heroSlide: ${slide.image}`, { image: slide.image }, {
       image: slide.image,
@@ -454,7 +428,6 @@ async function run() {
     });
   }
 
-  // 3. Services
   for (const [index, service] of SERVICES.entries()) {
     await upsert(Service, `service: ${service.slug}`, { slug: service.slug }, {
       ...service,
@@ -463,7 +436,6 @@ async function run() {
     });
   }
 
-  // 4. Pricing plans
   for (const [index, plan] of PRICING_PLANS.entries()) {
     await upsert(PricingPlan, `pricingPlan: ${plan.name}`, { name: plan.name }, {
       ...plan,
@@ -471,7 +443,6 @@ async function run() {
     });
   }
 
-  // 5. Stats
   for (const [index, stat] of STATS.entries()) {
     await upsert(Stat, `stat: ${stat.label}`, { label: stat.label }, {
       ...stat,
@@ -479,7 +450,6 @@ async function run() {
     });
   }
 
-  // 6. Client logos
   for (const [index, logo] of CLIENT_LOGOS.entries()) {
     await upsert(ClientLogo, `clientLogo: ${logo.name}`, { name: logo.name }, {
       ...logo,
@@ -487,7 +457,6 @@ async function run() {
     });
   }
 
-  // 7. FAQ
   for (const [index, faq] of FAQS.entries()) {
     await upsert(FAQ, `faq: ${faq.question}`, { question: faq.question }, {
       ...faq,
@@ -495,7 +464,6 @@ async function run() {
     });
   }
 
-  // 8. Portfolio works
   for (const [index, work] of WORKS.entries()) {
     await upsert(Work, `work: ${work.title}`, { title: work.title }, {
       title: work.title,
@@ -507,11 +475,8 @@ async function run() {
     });
   }
 
-  // 9. Site settings (single document)
   await upsert(SiteSettings, 'siteSettings', { key: 'site' }, SITE_SETTINGS);
 
-  // 10. Testimonials: no default content in the frontend data files,
-  //     so the collection is left empty for the admin to fill in later.
   const testimonialCount = await Testimonial.countDocuments();
 
   console.log('──────────────────────────────────────────');
